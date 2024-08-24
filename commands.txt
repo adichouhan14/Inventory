@@ -1,0 +1,3 @@
+commands
+flask db init == to create migration db
+flask db migrate -m "initial migrate"  == create migration
