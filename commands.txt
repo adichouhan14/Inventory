@@ -1,3 +1,5 @@
 commands
 flask db init == to create migration db
 flask db migrate -m "initial migrate"  == create migration
+flask db upgrade
+flask run
