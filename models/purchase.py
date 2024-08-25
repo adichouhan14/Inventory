@@ -17,4 +17,5 @@ class Purchase(db.Model):
         return f"<Purchase Product ID {self.product_id} - Quantity {self.purchase_quantity}>"
     
     def a():
-        return 'fdf'
+        c = 1 + 3
+        return 'df' + c
