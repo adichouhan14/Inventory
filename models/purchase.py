@@ -15,3 +15,6 @@ class Purchase(db.Model):
     
     def __repr__(self):
         return f"<Purchase Product ID {self.product_id} - Quantity {self.purchase_quantity}>"
+    
+    def a():
+        return 'fdf'
