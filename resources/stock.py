@@ -12,8 +12,7 @@ def insert_stock():
     data = request.get_json()
     product_id = data['product_id']
     product_quantity = data['product_quantity']
-    last_purchase_rate = data['last_purchase_rate']
-
+    
     # Check if the product exists in the Product table
     product = Product.query.get(product_id)
     if not product:
@@ -22,7 +21,6 @@ def insert_stock():
     new_stock = Stock(
         product_id=product_id,
         product_quantity=product_quantity,
-        last_purchase_rate=last_purchase_rate,
         last_update_date=datetime.utcnow()
     )
     db.session.add(new_stock)
@@ -40,8 +38,7 @@ def show_stocks():
             'product_id': stock.product_id,
             'product_name': stock.product.name,
             'product_quantity': stock.product_quantity,
-            'last_purchase_rate': stock.last_purchase_rate,
-            'last_update_date': stock.last_update_date
+           'last_update_date': stock.last_update_date
         }
         output.append(stock_data)
     return jsonify(output)
@@ -55,7 +52,6 @@ def update_stock(id):
         return jsonify({"message": "Stock entry not found!"}), 404
     
     stock.product_quantity = data.get('product_quantity', stock.product_quantity)
-    stock.last_purchase_rate = data.get('last_purchase_rate', stock.last_purchase_rate)
     stock.last_update_date = datetime.utcnow()
     
     db.session.commit()

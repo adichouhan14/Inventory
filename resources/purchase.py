@@ -29,19 +29,22 @@ def insert_purchase():
         purchase_date=datetime.utcnow()
     )
     db.session.add(new_purchase)
-    db.session.commit()
+    # Update the Stock table
+    stock = Stock.query.get(product_id)
+    if stock:
+        stock.product_quantity += purchase_quantity
+        stock.last_update_date = datetime.utcnow()
+    else:
+        # Create new stock if it doesn't exist
+        new_stock = Stock(
+            product_id=product_id,
+            product_quantity=purchase_quantity,
+            last_update_date=datetime.utcnow()
+        )
+        db.session.add(new_stock)
 
-    # Create a new entry in Stock table corresponding to this purchase
-    new_stock = Stock(
-        product_id=product_id,
-        product_quantity=purchase_quantity,
-        last_purchase_rate=purchase_rate,
-        last_update_date=datetime.utcnow()
-    )
-    db.session.add(new_stock)
     db.session.commit()
-
-    return jsonify({"message": "Purchase entry added successfully and new stock entry created!"}), 201
+    return jsonify({"message": "Purchase entry added successfully and stock updated!"}), 201
 
 # Show all purchase entries
 @purchase_bp.route('/purchases', methods=['GET'])
@@ -65,7 +68,6 @@ def show_purchases():
 def update_purchase(id):
     data = request.get_json()
     purchase = Purchase.query.get(id)
-    print('purchase------------>',purchase)
     if not purchase:
         return jsonify({"message": "Purchase entry not found!"}), 404
     old_product_id = purchase.product_id
@@ -81,18 +83,14 @@ def update_purchase(id):
 
     db.session.commit()
 
-    # Find the corresponding Stock entry
-    stock = Stock.query.filter_by(product_id=old_product_id, last_purchase_rate=old_rate, product_quantity=old_quantity).first()
+    # Update the Stock table
+    stock = Stock.query.get(purchase.product_id)
     if stock:
-        stock.product_id = purchase.product_id
-        stock.product_quantity = purchase.purchase_quantity
-        stock.last_purchase_rate = purchase.purchase_rate
+        stock.product_quantity += purchase.purchase_quantity - old_quantity
         stock.last_update_date = datetime.utcnow()
 
-        db.session.commit()
-        return jsonify({"message": "Purchase entry and corresponding stock updated successfully!"})
-    else:
-        return jsonify({"message": "Corresponding stock entry not found!"}), 404
+    db.session.commit()
+    return jsonify({"message": "Purchase entry updated successfully and stock adjusted!"})
 
 # Delete a purchase entry
 @purchase_bp.route('/purchase/<int:id>', methods=['DELETE'])
@@ -101,11 +99,14 @@ def delete_purchase(id):
     if not purchase:
         return jsonify({"message": "Purchase entry not found!"}), 404
 
-    # Find the corresponding Stock entry
-    stock = Stock.query.filter_by(product_id=purchase.product_id, last_purchase_rate=purchase.purchase_rate, product_quantity=purchase.purchase_quantity).first()
+    # Update the Stock table
+    stock = Stock.query.get(purchase.product_id)
     if stock:
-        db.session.delete(stock)
+        stock.product_quantity -= purchase.purchase_quantity
+        if stock.product_quantity < 0:
+            stock.product_quantity = 0
+        stock.last_update_date = datetime.utcnow()
 
     db.session.delete(purchase)
     db.session.commit()
-    return jsonify({"message": "Purchase entry and corresponding stock deleted successfully!"})
+    return jsonify({"message": "Purchase entry deleted successfully and stock adjusted!"})
