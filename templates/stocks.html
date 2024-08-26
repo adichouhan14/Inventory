@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block title %}Stock{% endblock %}
+{% block content %}
+<h2>Stock Management</h2>
+<form id="stockForm" method="POST">
+    <label for="product">Product ID:</label>
+    <input type="text" id="product" name="product" required><br>
+
+    <label for="quantity">Quantity:</label>
+    <input type="number" id="quantity" name="quantity" required><br>
+
+    <button type="submit">Update Stock</button>
+</form>
+
+<h3>Stock List</h3>
+<ul id="stockList"></ul>
+{% endblock %}

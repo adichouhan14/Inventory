@@ -13,7 +13,7 @@ def insert_purchase():
     product_id = data['product_id']
     purchase_quantity = data['purchase_quantity']
     purchase_rate = data['purchase_rate']
-    purchase_amount = purchase_quantity * purchase_rate
+    purchase_amount = int(purchase_quantity) * int(purchase_rate)
 
     # Check if the product exists in the Product table
     product = Product.query.get(product_id)
