@@ -1,0 +1,28 @@
+{% extends 'sublayout.html' %}
+
+{% block title %}Product List{% endblock %}
+{% block page_title %}Product List{% endblock %}
+{% set filter_label = "Product ID" %}
+
+{% block table_headers %}
+    <th>Product ID</th>
+    <th>Category</th>
+    <th>Product Name</th>
+    <th>Date of Introduction</th>
+{% endblock %}
+
+{% block table_rows %}
+    <!-- Assuming you are passing the products data from the backend -->
+    {% for product in products %}
+    <tr>
+        <td>{{ product.id }}</td>
+        <td>{{ product.category }}</td>
+        <td>{{ product.name }}</td>
+        <td>{{ product.introduce_date.strftime('%Y-%m-%d') }}</td>
+        <td>
+            <button class="btn btn-warning btn-sm edit-btn" data-id="{{ product.id }}">Edit</button>
+            <button class="btn btn-danger btn-sm delete-btn" data-id="{{ product.id }}">Delete</button>
+        </td>
+    </tr>
+    {% endfor %}
+{% endblock %}

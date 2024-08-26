@@ -1,0 +1,42 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <!-- Title -->
+    <h2 class="text-center mb-4">{% block page_title %}{% endblock %}</h2>
+
+    <!-- Add New Record Button -->
+    <div class="text-center mb-3">
+        <button type="button" class="btn btn-primary">Add New Record</button>
+    </div>
+
+    <!-- Filter Options -->
+    <div class="mb-3">
+        <input type="text" class="form-control" placeholder="Filter by {{ filter_label }}" id="filter">
+    </div>
+
+    <!-- Table -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    {% block table_headers %}{% endblock %}
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% block table_rows %}{% endblock %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        </ul>
+    </nav>
+{% endblock %}

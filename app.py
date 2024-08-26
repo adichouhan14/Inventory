@@ -1,31 +1,36 @@
 from flask import Flask, request, jsonify, render_template
-#from flask_sqlalchemy import SQLAlchemy
-from models import __init__
-from db import db
+from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from dotenv import load_dotenv
+import os
+
+# Load environment variables
+load_dotenv()
+
+# Initialize Flask app
+app = Flask(__name__)
+
+# Configure the SQLAlchemy part of the app instance
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("db_url")
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Initialize the database and migration objects
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+
+# Import Blueprints (assuming you have created these in separate files)
 from resources.product import product_bp
 from resources.stock import stock_bp
 from resources.purchase import purchase_bp
 from resources.sales import sales_bp
-import os
-from dotenv import load_dotenv
 
-load_dotenv()
-
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("db_url")
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db.init_app(app)
-
+# Register Blueprints
 app.register_blueprint(product_bp)
 app.register_blueprint(stock_bp)
 app.register_blueprint(purchase_bp)
 app.register_blueprint(sales_bp)
 
-
-migrate = Migrate(app, db)
-
-# In-memory data stores for demonstration
+# In-memory data stores for demonstration (not connected to the database)
 products = []
 purchases = []
 stock = []
@@ -37,7 +42,12 @@ def index():
 
 @app.route('/product')
 def product():
-    return render_template('products.html')
+    return render_template('product.html')
+
+@app.route('/products')
+def products_page():
+    products = Product.query.all()  # Fetch all products from the database
+    return render_template('product.html', products=products)
 
 @app.route('/purchase')
 def purchase():
@@ -57,7 +67,7 @@ def add_sales():
     sales.append(data)
     return jsonify({"message": "Sale recorded successfully!"}), 201
 
-@app.route('/stock', methods=['POST'])
+@app.route('/stock', methods=['PUT'])
 def add_stock():
     data = request.json
     stock.append(data)
