@@ -1,8 +1,15 @@
 from flask import Flask, request, jsonify, render_template
-from flask_sqlalchemy import SQLAlchemy
+#from flask_sqlalchemy import SQLAlchemy
+from models import *
+# from models.product import Product
+from db import db
 from flask_migrate import Migrate
-from dotenv import load_dotenv
+from resources.product import product_bp
+from resources.stock import stock_bp
+from resources.purchase import purchase_bp
+from resources.sales import sales_bp
 import os
+from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
@@ -15,7 +22,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("db_url")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize the database and migration objects
-db = SQLAlchemy(app)
+# db = SQLAlchemy(app)
+db.init_app(app)
 migrate = Migrate(app, db)
 
 # Import Blueprints (assuming you have created these in separate files)
@@ -30,22 +38,12 @@ app.register_blueprint(stock_bp)
 app.register_blueprint(purchase_bp)
 app.register_blueprint(sales_bp)
 
-# In-memory data stores for demonstration (not connected to the database)
-products = []
-purchases = []
-stock = []
-sales = []
-
 @app.route('/')
 def index():
     return render_template('index.html')
 
 @app.route('/product')
 def product():
-    return render_template('product.html')
-
-@app.route('/products')
-def products_page():
     products = Product.query.all()  # Fetch all products from the database
     return render_template('product.html', products=products)
 
