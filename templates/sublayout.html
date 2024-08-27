@@ -6,7 +6,10 @@
 
     <!-- Add New Record Button -->
     <div class="text-center mb-3">
-        <button type="button" class="btn btn-primary">Add New Record</button>
+        <!-- <button type="button" class="btn btn-primary">Add New Record</button> -->
+        <a href="{{redirect_link}}" class="btn btn-primary">
+            {{buttonlabel}}
+        </a>
     </div>
 
     <!-- Filter Options -->
@@ -17,7 +20,7 @@
     <!-- Table -->
     <div class="table-responsive">
         <table class="table table-bordered table-striped">
-            <thead>
+            <thead> 
                 <tr>
                     {% block table_headers %}{% endblock %}
                     <th>Actions</th>

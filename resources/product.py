@@ -1,7 +1,7 @@
 from models import Product
 from datetime import datetime
-from flask import Flask, request, jsonify, Blueprint
-from db import db
+from flask import Flask, request, jsonify, Blueprint, render_template
+from db import db 
 
 
 product_bp = Blueprint('product_bp', __name__)
@@ -9,7 +9,7 @@ product_bp = Blueprint('product_bp', __name__)
 # Insert a new product
 @product_bp.route('/product', methods=['POST'])
 def insert_product():
-    data = request.get_json()
+    data = request.form
     new_product = Product(
         name=data['name'],
         category=data['category'],
@@ -45,20 +45,7 @@ def delete_product(id):
     db.session.commit()
     return jsonify({"message": "Product deleted successfully!"})
 
-# Show all products
-@product_bp.route('/products', methods=['GET'])
-def show_products():
-    products = Product.query.all()
-    output = []
-    for product in products:
-        product_data = {
-            'id': product.id,
-            'name': product.name,
-            'category': product.category,
-            'introduce_date': product.introduce_date
-        }
-        output.append(product_data)
-    return jsonify(output)
+
 
 # Show products by category
 @product_bp.route('/products/category/<string:category>', methods=['GET'])

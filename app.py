@@ -10,7 +10,7 @@ from resources.purchase import purchase_bp
 from resources.sales import sales_bp
 import os
 from dotenv import load_dotenv
-
+from resources.product import *
 # Load environment variables
 load_dotenv()
 
@@ -42,10 +42,15 @@ app.register_blueprint(sales_bp)
 def index():
     return render_template('index.html')
 
-@app.route('/product')
+@app.route('/products',  methods=['GET'])
 def product():
-    products = Product.query.all()  # Fetch all products from the database
+    products = Product.query.all()  #Fetch all products from the database
     return render_template('product.html', products=products)
+
+
+@app.route('/add_product')
+def add_product():
+    return render_template('add_product.html')
 
 @app.route('/purchase')
 def purchase():
@@ -58,6 +63,8 @@ def stock():
 @app.route('/sales')
 def sales():
     return render_template('sales.html')
+
+
 
 @app.route('/sales', methods=['POST'])
 def add_sales():
