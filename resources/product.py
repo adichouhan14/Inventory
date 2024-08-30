@@ -9,15 +9,18 @@ product_bp = Blueprint('product_bp', __name__)
 # Insert a new product
 @product_bp.route('/product', methods=['POST'])
 def insert_product():
-    data = request.form
-    new_product = Product(
-        name=data['name'],
-        category=data['category'],
-        introduce_date=datetime.utcnow()  # or data['introduce_date'] if provided
-    )
-    db.session.add(new_product)
-    db.session.commit()
-    return jsonify({"message": "Product added successfully!"}), 201
+    try:
+        data = request.form
+        new_product = Product(
+            name=data['name'],
+            category=data['category'],
+            introduce_date=datetime.utcnow()  # or data['introduce_date'] if provided
+        )
+        db.session.add(new_product)
+        db.session.commit()
+        return jsonify({"message": "Product added successfully!"}), 201
+    except Exception as e:
+        return jsonify({"message": "Failed to insert product."}), 500
 
 # Update an existing product
 @product_bp.route('/product/<int:id>', methods=['PUT'])
@@ -43,8 +46,7 @@ def delete_product(id):
     
     db.session.delete(product)
     db.session.commit()
-    return jsonify({"message": "Product deleted successfully!"})
-
+    return jsonify({"message": "Product deleted successfully!"}), 200
 
 
 # Show products by category
