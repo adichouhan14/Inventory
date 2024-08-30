@@ -44,8 +44,15 @@ def index():
 
 @app.route('/products',  methods=['GET'])
 def product():
-    products = Product.query.all()  #Fetch all products from the database
-    return render_template('product.html', products=products)
+    # products = Product.query.all()  #Fetch all products from the database
+    # return render_template('product.html', products=products)
+    page = request.args.get('page', 1, type=int)
+    per_page = 10
+    pagination = Product.query.paginate(page=page, per_page=per_page, error_out=False)
+    
+    products = pagination.items
+
+    return render_template('product.html', products=products, pagination=pagination)
 
 
 @app.route('/add_product')
