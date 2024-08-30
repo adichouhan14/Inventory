@@ -2,9 +2,23 @@ from models import Product
 from datetime import datetime
 from flask import Flask, request, jsonify, Blueprint, render_template
 from db import db 
-
+from sqlalchemy import or_
 
 product_bp = Blueprint('product_bp', __name__)
+
+
+@product_bp.route('/product/<int:id>', methods=['GET'])
+def get_product(id):
+    product = Product.query.get(id)
+    if product:
+        return jsonify({
+            'id': product.id,
+            'name': product.name,
+            'category': product.category
+        })
+    else:
+        return jsonify({'error': 'Product not found'}), 404
+
 
 # Insert a new product
 @product_bp.route('/product', methods=['POST'])
@@ -35,7 +49,7 @@ def update_product(id):
     product.introduce_date = data.get('introduce_date', product.introduce_date)
     
     db.session.commit()
-    return jsonify({"message": "Product updated successfully!"})
+    return jsonify({"message": "Product updated successfully!"}),200
 
 # Delete a product
 @product_bp.route('/product/<int:id>', methods=['DELETE'])
@@ -66,3 +80,28 @@ def show_products_by_category(category):
         }
         output.append(product_data)
     return jsonify(output)
+
+
+@product_bp.route('/product/filter')
+def filter_products():
+    query = request.args.get('query', '', type=str).strip()
+
+    # Separate query by ID if it's numeric
+    if query.isdigit():
+        filtered_products = Product.query.filter(Product.id == int(query)).all()
+    else:
+        filtered_products = Product.query.filter(
+            or_(
+                Product.name.ilike(f'%{query}%'),
+                Product.category.ilike(f'%{query}%')
+            )
+        ).all()
+
+    products_list = [{
+        'id': product.id,
+        'category': product.category,
+        'name': product.name,
+        'introduce_date': product.introduce_date.strftime('%Y-%m-%d')
+    } for product in filtered_products]
+
+    return jsonify(products=products_list)

@@ -1,38 +1,39 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-    <!-- Title -->
-    <h2 class="text-center mb-4">{% block page_title %}{% endblock %}</h2>
+<!-- Title -->
+<h2 class="text-center mb-4">{% block page_title %}{% endblock %}</h2>
 
-    <!-- Add New Record Button -->
-    <div class="text-center mb-3">
-        <!-- <button type="button" class="btn btn-primary">Add New Record</button> -->
-        <a href="{{redirect_link}}" class="btn btn-primary">
-            {{buttonlabel}}
-        </a>
-    </div>
+<!-- Add New Record Button -->
+<div class="text-center mb-3">
+    <!-- <button type="button" class="btn btn-primary">Add New Record</button> -->
+    <a href="{{redirect_link}}" class="btn btn-primary">
+        {{buttonlabel}}
+    </a>
+</div>
 
-    <!-- Filter Options -->
-    <div class="mb-3">
-        <input type="text" class="form-control" placeholder="Filter by {{ filter_label }}" id="filter">
-    </div>
+<!-- Filter Options -->
+<div class="mb-3">
+    <!-- <input type="text" class="form-control" placeholder="Filter by {{ filter_label }}" id="filter"> -->
+    <input type="text" class="form-control" placeholder="Filter by {{ filter_label }}" id="{{ filter_value }}">
+</div>
 
-    <!-- Table -->
-    <div class="table-responsive">
-        <table class="table table-bordered table-striped">
-            <thead> 
-                <tr>
-                    {% block table_headers %}{% endblock %}
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% block table_rows %}{% endblock %}
-            </tbody>
-        </table>
-    </div>
+<!-- Table -->
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                {% block table_headers %}{% endblock %}
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="{{ tbodyid }}">
+            {% block table_rows %}{% endblock %}
+        </tbody>
+    </table>
+</div>
 
-    <!-- Pagination -->
+<!-- Pagination -->
 <nav aria-label="Page navigation example">
     <ul class="pagination justify-content-center">
         {% if pagination.has_prev %}
