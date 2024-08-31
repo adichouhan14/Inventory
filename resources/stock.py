@@ -64,3 +64,27 @@ def delete_stock(id):
     db.session.delete(stock)
     db.session.commit()
     return jsonify({"message": "Stock entry deleted successfully!"})
+
+# Filter stock
+@stock_bp.route('/stock/filter')
+def filter_stock():
+    print('In stock filter')
+    query = request.args.get('query', '', type=str).strip()
+
+    # Separate query by ID if it's numeric
+    if query.isdigit():
+        filtered_stock = Stock.query.filter(Stock.id == int(query)).all()
+        print('filtered_stock id-->', filtered_stock)
+    else:
+        filtered_stock = Stock.query.join(Product).filter(Product.name.ilike(f'%{query}%')).all()
+        print('filtered_stock-->', filtered_stock)
+
+    stock_list = [{
+        'id': stock.id,
+        'name': stock.product.name,
+        'product_quantity': stock.product_quantity,
+        'last_update_date': stock.last_update_date.strftime('%Y-%m-%d')
+    } for stock in filtered_stock]
+    
+    print('stock_list-->', stock_list)
+    return jsonify(stocks=stock_list)
