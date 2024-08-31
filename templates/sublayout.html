@@ -1,0 +1,85 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<!-- Title -->
+<h2 class="text-center mb-4">{% block page_title %}{% endblock %}</h2>
+
+<!-- Add New Record Button -->
+<div class="text-center mb-3">
+    <button type="button" class="btn btn-primary" id="{{add_record}}">{{buttonlabel}}</button>
+    </a>
+</div>
+
+<!-- Filter Options -->
+<div class="mb-3">
+    <!-- <input type="text" class="form-control" placeholder="Filter by {{ filter_label }}" id="filter"> -->
+    <!-- <input type="text" class="form-control" placeholder="Filter by {{ filter_label }}" id="{{ filter_value }}"> -->
+    <div class="input-group">
+        <span class="input-group-text">
+            <svg width="20" height="20" fill="currentColor" class="bi bi-funnel-fill" viewBox="0 0 16 16">
+                <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5z"/>
+              </svg>
+        </span>
+        <input type="text" class="form-control" placeholder="Filter by {{ filter_label }}" id="{{ filter_value }}">
+    </div>
+</div>
+
+<!-- Table -->
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                {% block table_headers %}{% endblock %}
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="{{ tbodyid }}">
+            {% block table_rows %}{% endblock %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination -->
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        {% if pagination.has_prev %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for(request.endpoint, page=pagination.prev_num) }}">Previous</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">Previous</span>
+        </li>
+        {% endif %}
+
+        {% for page_num in pagination.iter_pages() %}
+        {% if page_num %}
+        {% if page_num == pagination.page %}
+        <li class="page-item active">
+            <span class="page-link">{{ page_num }}</span>
+        </li>
+        {% else %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for(request.endpoint, page=page_num) }}">{{ page_num }}</a>
+        </li>
+        {% endif %}
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">…</span>
+        </li>
+        {% endif %}
+        {% endfor %}
+
+        {% if pagination.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for(request.endpoint, page=pagination.next_num) }}">Next</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <span class="page-link">Next</span>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+
+{% endblock %}

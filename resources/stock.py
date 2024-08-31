@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, render_template
 from models import Stock, Product
 from db import db
 from datetime import datetime
@@ -30,18 +30,15 @@ def insert_stock():
 # Show all stock entries
 @stock_bp.route('/stocks', methods=['GET'])
 def show_stocks():
-    stocks = Stock.query.all()
-    output = []
+    page = request.args.get('page', 1, type=int)
+    per_page = 10
+    pagination = Stock.query.paginate(page=page, per_page=per_page, error_out=False)
+    
+    stocks = pagination.items
     for stock in stocks:
-        stock_data = {
-            'id': stock.id,
-            'product_id': stock.product_id,
-            'product_name': stock.product.name,
-            'product_quantity': stock.product_quantity,
-           'last_update_date': stock.last_update_date
-        }
-        output.append(stock_data)
-    return jsonify(output)
+        stock.name = stock.product.name
+
+    return render_template('stocks.html', stocks=stocks, pagination=pagination)
 
 # Update an existing stock entry
 @stock_bp.route('/stock/<int:id>', methods=['PUT'])
@@ -67,3 +64,27 @@ def delete_stock(id):
     db.session.delete(stock)
     db.session.commit()
     return jsonify({"message": "Stock entry deleted successfully!"})
+
+# Filter stock
+@stock_bp.route('/stock/filter')
+def filter_stock():
+    print('In stock filter')
+    query = request.args.get('query', '', type=str).strip()
+
+    # Separate query by ID if it's numeric
+    if query.isdigit():
+        filtered_stock = Stock.query.filter(Stock.id == int(query)).all()
+        print('filtered_stock id-->', filtered_stock)
+    else:
+        filtered_stock = Stock.query.join(Product).filter(Product.name.ilike(f'%{query}%')).all()
+        print('filtered_stock-->', filtered_stock)
+
+    stock_list = [{
+        'id': stock.id,
+        'name': stock.product.name,
+        'product_quantity': stock.product_quantity,
+        'last_update_date': stock.last_update_date.strftime('%Y-%m-%d')
+    } for stock in filtered_stock]
+    
+    print('stock_list-->', stock_list)
+    return jsonify(stocks=stock_list)

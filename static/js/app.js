@@ -197,3 +197,21 @@ document.addEventListener('DOMContentLoaded', () => {
         loadSales();
     }
 });
+
+function showPopup(title, message) {
+    // Update the popup content
+    document.getElementById('actionModalLabel').innerText = title;
+    document.querySelector('#actionModal .modal-body p').innerText = message;
+
+    // Show the popup
+    var actionModal = new bootstrap.Modal(document.getElementById('actionModal'));
+    actionModal.show();
+}
+
+
+// function showPopup(title, message) {
+//     const popupModal = new bootstrap.Modal(document.getElementById('genericPopup'));
+//     document.getElementById('popupTitle').innerText = title;
+//     document.getElementById('popupMessage').innerText = message;
+//     popupModal.show();
+// }

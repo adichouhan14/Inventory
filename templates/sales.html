@@ -1,21 +1,154 @@
-{% extends "layout.html" %}
+{% extends "sublayout.html" %}
 
 {% block title %}Sales{% endblock %}
-{% block content %}
-<h2>Sales Management</h2>
-<form id="salesForm" method="POST">
-    <label for="product">Product ID:</label>
-    <input type="text" id="product" name="product" required><br>
+{% block page_title %}Sales List{% endblock %}
+{% set buttonlabel = "Add new sale" %}
+{% set redirect_link = "add_sale" %}
+{% set add_record = "add_sale" %}
+{% set filter_label = "Sales id or Product Name" %}
+{% set filter_value = "filter_sale" %}
+{% set tbodyid = "salesTableBody" %}
 
-    <label for="quantity">Quantity:</label>
-    <input type="number" id="quantity" name="quantity" required><br>
+{% block table_headers %}
+<th>Sales ID</th>
+<th>Product Name</th>
+<th>Sales Quantity</th>
+<th>Sales Rate</th>
+<th>Sales Amount</th>
+<th>Date of Sale</th>
+{% endblock %}
 
-    <label for="rate">Rate:</label>
-    <input type="number" step="0.01" id="rate" name="rate" required><br>
+{% block table_rows %}
+<!-- Assuming you are passing the products data from the backend -->
+{% for sale in sales %}
+<tr id="sale-{{ sale.id }}">
+    <td>{{ sale.id }}</td>
+    <td>{{ sale.name }}</td>
+    <td>{{ sale.sales_quantity }}</td>
+    <td>{{ sale.sales_rate }}</td>
+    <td>{{ sale.sales_amount }}</td>
+    <td>{{ sale.sales_date.strftime('%Y-%m-%d') }}</td>
+    <td>
+        <button class="btn btn-warning btn-sm edit-btn1" data-id="{{ sale.id }}">Edit</button>
+        <button class="btn btn-danger btn-sm delete-btn1" data-id="{{ sale.id }}">Delete</button>
+    </td>
+</tr>
 
-    <button type="submit">Record Sale</button>
-</form>
+{% endfor %}
 
-<h3>Sales List</h3>
-<ul id="salesList"></ul>
+<!-- Modal for Delete Confirmation -->
+<div class="modal fade" id="deleteModalSales" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Delete Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this sales record?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    No
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteSales">
+                    Yes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- edit_modal.html -->
+<div class="modal fade" id="editSalesModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit Sale</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editSalesForm">
+                    <div class="mb-3">
+                        <label for="saleId" class="form-label">Sale ID</label>
+                        <input type="text" class="form-control" id="saleId" name="id" readonly>
+                    </div>
+                    <!-- <div class="mb-3">
+                        <label for="productName" class="form-label">Product Name</label>
+                        <input type="text" class="form-control" id="productName" name="product_name" required>
+                    </div> -->
+                    <div class="mb-3">
+                        <label for="productId" class="form-label">Product</label>
+                        <select class="form-control form-select" id="productId" name="product_id" required>
+                            <option id="productName" selected></option>
+                            {% for product in products  %}
+                                <option value="{{ product.id }}">{{ product.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>   
+                    <div class="mb-3">
+                        <label for="salesQuantity" class="form-label">Quantity</label>
+                        <input type="number" class="form-control" id="salesQuantity" name="sales_quantity" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="salesRate" class="form-label">Rate</label>
+                        <input type="number" step="0.01" class="form-control" id="salesRate" name="sales_rate" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="salesAmount" class="form-label">Amount</label>
+                        <input type="number" step="0.01" class="form-control" id="salesAmount" name="sales_amount" required readonly>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="updateSaleBtn">Update Sale</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- add_sales_modal.html -->
+<div class="modal fade" id="addSalesModal" tabindex="-1" aria-labelledby="addSalesModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addSalesModalLabel">Add Sale</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                
+                <form id="addSalesForm">
+                    <div class="mb-3">
+                        <label for="productId" class="form-label">Product</label>
+                        <select class="form-control form-select" id="productId" name="product_id" required>
+                            <option selected>Select Product</option>
+                            {% for product in products  %}
+                                <option value="{{ product.id }}">{{ product.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <!-- <div class="mb-3">
+                        <label for="productId" class="form-label">Product ID</label>
+                        <input type="number" class="form-control" id="productId" name="product_id" required>
+                    </div> -->
+                    <div class="mb-3">
+                        <label for="salesQuantity" class="form-label">Sales Quantity</label>
+                        <input type="number" class="form-control" id="salesQuantity" name="sales_quantity" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="salesRate" class="form-label">Sales Rate</label>
+                        <input type="number" step="0.01" class="form-control" id="salesRate" name="sales_rate" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="addSaleBtn">Add</button>
+                    </div>
+                </form>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
 {% endblock %}
