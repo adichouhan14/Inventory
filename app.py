@@ -54,17 +54,17 @@ def product():
 
     return render_template('product.html', products=products, pagination=pagination)
 
-@app.route('/add_product')
-def add_product():
-    return render_template('add_product.html')
+# @app.route('/add_product')
+# def add_product():
+#     return render_template('add_product.html')
 
-@app.route('/purchase')
-def purchase():
-    return render_template('purchases.html')
+# @app.route('/purchase')
+# def purchase():
+#     return render_template('purchases.html')
 
-@app.route('/stock')
-def stock():
-    return render_template('stocks.html')
+# @app.route('/stock')
+# def stock():
+#     return render_template('stocks.html')
 
 # @app.route('/sales')
 # def sales():
@@ -77,11 +77,11 @@ def stock():
 #     sales.append(data)
 #     return jsonify({"message": "Sale recorded successfully!"}), 201
 
-@app.route('/stock', methods=['PUT'])
-def add_stock():
-    data = request.json
-    stock.append(data)
-    return jsonify({"message": "Stock updated successfully!"}), 201
+# @app.route('/stock', methods=['PUT'])
+# def add_stock():
+#     data = request.json
+#     stock.append(data)
+#     return jsonify({"message": "Stock updated successfully!"}), 201
 
 if __name__ == '__main__':
     # with app.app_context():

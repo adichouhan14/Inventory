@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, render_template
 from models import Stock, Product
 from db import db
 from datetime import datetime
@@ -30,18 +30,15 @@ def insert_stock():
 # Show all stock entries
 @stock_bp.route('/stocks', methods=['GET'])
 def show_stocks():
-    stocks = Stock.query.all()
-    output = []
+    page = request.args.get('page', 1, type=int)
+    per_page = 10
+    pagination = Stock.query.paginate(page=page, per_page=per_page, error_out=False)
+    
+    stocks = pagination.items
     for stock in stocks:
-        stock_data = {
-            'id': stock.id,
-            'product_id': stock.product_id,
-            'product_name': stock.product.name,
-            'product_quantity': stock.product_quantity,
-           'last_update_date': stock.last_update_date
-        }
-        output.append(stock_data)
-    return jsonify(output)
+        stock.name = stock.product.name
+
+    return render_template('stocks.html', stocks=stocks, pagination=pagination)
 
 # Update an existing stock entry
 @stock_bp.route('/stock/<int:id>', methods=['PUT'])
