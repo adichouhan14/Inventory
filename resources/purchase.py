@@ -6,6 +6,7 @@ from datetime import datetime
 # Create a Blueprint
 purchase_bp = Blueprint('purchase_bp', __name__)
 
+
 # Insert a new purchase entry
 @purchase_bp.route('/purchase', methods=['POST'])
 def insert_purchase():
@@ -30,8 +31,8 @@ def insert_purchase():
             purchase_date=datetime.utcnow()
         )
         db.session.add(new_purchase)
-        # Update the Stock table
-        stock = Stock.query.get(product_id)
+        # Update the Stock tablea
+        stock = db.session.query(Stock).filter(Stock.product_id == product_id).first()
         if stock:
             stock.product_quantity += purchase_quantity
             stock.last_update_date = datetime.utcnow()

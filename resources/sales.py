@@ -25,7 +25,8 @@ def insert_sale():
             return jsonify({"message": "Product not found in Product table!"}), 404
 
         # Check if the stock exists and if there is enough stock available
-        stock = Stock.query.get(product_id)
+        # stock = Stock.query.get(product_id)
+        stock = db.session.query(Stock).filter(Stock.product_id == product_id).first()
         if not stock:
             return jsonify({"message": "Stock entry not found for the product!"}), 404
         if stock.product_quantity < sales_quantity:
