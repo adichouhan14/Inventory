@@ -34,6 +34,9 @@ def insert_product():
         db.session.commit()
         return jsonify({"message": "Product added successfully!"}), 201
     except Exception as e:
+        print('Exception occured while adding product',e)
+        if 'already exists' in str(e): 
+            return jsonify({"message": "Product already present."}), 500
         return jsonify({"message": "Failed to insert product."}), 500
 
 # Update an existing product

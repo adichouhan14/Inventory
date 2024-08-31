@@ -63,7 +63,8 @@ def show_sales():
     sales = pagination.items
     for sale in sales:
         sale.name = sale.product.name
-    return render_template('sales.html', sales=sales, pagination=pagination)
+    products = Product.query.all()
+    return render_template('sales.html', sales=sales, products=products, pagination=pagination)
 
 # Retrieve sale data for editing
 @sales_bp.route('/sale/<int:id>', methods=['GET', 'PUT'])

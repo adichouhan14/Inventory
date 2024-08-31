@@ -59,6 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     // Populate the form with the purchase data
                     document.getElementById('purchaseId').value = data.id;
                     document.getElementById('productName').value = data.name;
+                    document.getElementById('productName').textContent  = data.name;
                     document.getElementById('purchaseQuantity').value = data.purchase_quantity;
                     document.getElementById('purchaseRate').value = data.purchase_rate;
                     document.getElementById('purchaseAmount').value = data.purchase_amount;

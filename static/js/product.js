@@ -152,23 +152,29 @@ document.addEventListener('DOMContentLoaded', function () {
         }).then(response => response.json().then(data => ({ status: response.status, body: data })))
             .then(({ status, body }) => {
                 console.error('Status:', status);
+                const modalElement = document.getElementById('addModal');
+                const modal = bootstrap.Modal.getInstance(modalElement); // Get the modal instance
                 if (status === 201) {  // Check for the 201 Created status code
                     // document.getElementById('addModal').hide()
-                    const modalElement = document.getElementById('addModal');
-                    const modal = bootstrap.Modal.getInstance(modalElement); // Get the modal instance
                     modal.hide(); // Hide the modal
                     document.getElementById('addForm').reset(); // Reset the form
                     showPopup('Success', 'Product inserted successfully!');
                     setTimeout(() => {
                         window.location.href = window.location.origin + '/products';
-                    }, 2000);
+                    }, 3000);
                 } else {
+                    modal.hide();
+                    console.log('an error occured while adding product.')
                     showPopup('Error', body.message || 'Failed to insert product.');
-                    window.location.href = window.location.origin + '/products';
+                    setTimeout(() => {
+                        window.location.href = window.location.origin + '/products';
+                    }, 3000);
+                    
+                    
                 }
             }).catch(error => {
                 console.error('Error:', error);
-                showPopup('Error', 'An error occurred while inserting the product.');
+                showPopup('Error', body.message || 'An error occurred while inserting the product.');
             });
     });
 });

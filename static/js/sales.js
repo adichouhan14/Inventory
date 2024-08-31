@@ -59,6 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     // Populate the form with the sale data
                     document.getElementById('saleId').value = data.id;
                     document.getElementById('productName').value = data.name;
+                    document.getElementById('productName').textContent = data.name;
                     document.getElementById('salesQuantity').value = data.sales_quantity;
                     document.getElementById('salesRate').value = data.sales_rate;
                     document.getElementById('salesAmount').value = data.sales_amount;

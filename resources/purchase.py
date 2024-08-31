@@ -60,7 +60,8 @@ def show_purchases():
     purchases = pagination.items
     for purchase in purchases:
         purchase.name = purchase.product.name
-    return render_template('purchases.html', purchases=purchases, pagination=pagination)
+    products = Product.query.all()
+    return render_template('purchases.html', purchases=purchases,products=products, pagination=pagination)
 
 # Retrieve purchase data for editing
 @purchase_bp.route('/purchase/<int:id>', methods=['GET', 'PUT'])

@@ -73,10 +73,19 @@
                         <label for="saleId" class="form-label">Sale ID</label>
                         <input type="text" class="form-control" id="saleId" name="id" readonly>
                     </div>
-                    <div class="mb-3">
+                    <!-- <div class="mb-3">
                         <label for="productName" class="form-label">Product Name</label>
                         <input type="text" class="form-control" id="productName" name="product_name" required>
-                    </div>
+                    </div> -->
+                    <div class="mb-3">
+                        <label for="productId" class="form-label">Product</label>
+                        <select class="form-control form-select" id="productId" name="product_id" required>
+                            <option id="productName" selected></option>
+                            {% for product in products  %}
+                                <option value="{{ product.id }}">{{ product.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>   
                     <div class="mb-3">
                         <label for="salesQuantity" class="form-label">Quantity</label>
                         <input type="number" class="form-control" id="salesQuantity" name="sales_quantity" required>
@@ -111,9 +120,18 @@
                 
                 <form id="addSalesForm">
                     <div class="mb-3">
+                        <label for="productId" class="form-label">Product</label>
+                        <select class="form-control form-select" id="productId" name="product_id" required>
+                            <option selected>Select Product</option>
+                            {% for product in products  %}
+                                <option value="{{ product.id }}">{{ product.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <!-- <div class="mb-3">
                         <label for="productId" class="form-label">Product ID</label>
                         <input type="number" class="form-control" id="productId" name="product_id" required>
-                    </div>
+                    </div> -->
                     <div class="mb-3">
                         <label for="salesQuantity" class="form-label">Sales Quantity</label>
                         <input type="number" class="form-control" id="salesQuantity" name="sales_quantity" required>
