@@ -1,4 +1,5 @@
 __pycache__
 virtualenv
 .env
-venv_tile
+.idea
+.venv
