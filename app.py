@@ -54,7 +54,6 @@ def product():
 
     return render_template('product.html', products=products, pagination=pagination)
 
-
 @app.route('/add_product')
 def add_product():
     return render_template('add_product.html')
@@ -67,17 +66,16 @@ def purchase():
 def stock():
     return render_template('stocks.html')
 
-@app.route('/sales')
-def sales():
-    return render_template('sales.html')
+# @app.route('/sales')
+# def sales():
+#     print("In sales")
+#     return render_template('sales.html')
 
-
-
-@app.route('/sales', methods=['POST'])
-def add_sales():
-    data = request.json
-    sales.append(data)
-    return jsonify({"message": "Sale recorded successfully!"}), 201
+# @app.route('/sales', methods=['POST'])
+# def add_sales():
+#     data = request.json
+#     sales.append(data)
+#     return jsonify({"message": "Sale recorded successfully!"}), 201
 
 @app.route('/stock', methods=['PUT'])
 def add_stock():

@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Delete button click event to show confirmation modal
     document.querySelectorAll('.delete-btn').forEach(function (button) {
         button.addEventListener('click', function () {
-            console.log('click delete button');
+            console.log('click delete button Product');
             deleteProductId = this.dataset.id;
             var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
             deleteModal.show();
@@ -82,9 +82,9 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             body: formJSON
         }).then(response => response.json().then(data => ({ status: response.status, body: data })))
-        .then(({ status, body }) => {
-            console.error('Status update:', status);
-            if (status === 200) {
+            .then(({ status, body }) => {
+                console.error('Status update:', status);
+                if (status === 200) {
                     window.location.reload(); // Reload the page to show updated data
                 } else {
                     alert('An error occurred while updating the product.');
@@ -129,67 +129,47 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => console.error('Error fetching filtered products:', error));
     });
 
-});
+    document.getElementById('add_product').addEventListener('click', function () {
+        console.log('click add button');
+        var addModal = new bootstrap.Modal(document.getElementById('addModal'));
+        addModal.show();
 
-document.getElementById('addProductForm').addEventListener('submit', function (event) {
-    event.preventDefault();
-    const formData = new FormData(this);
+    });
 
-    fetch('/product', {
-        method: 'POST',
-        body: formData
-    }).then(response => response.json().then(data => ({ status: response.status, body: data })))
-        .then(({ status, body }) => {
-            console.error('Status:', status);
-            if (status === 201) {  // Check for the 201 Created status code
-                console.error('')
-                showPopup('Success', 'Product inserted successfully!');
-                setTimeout(() => {
+    document.getElementById('addForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        console.log('addModel:: add call 1111');
+
+        const formData = new FormData(this);
+        // Convert FormData to a plain object
+        const formObject = Object.fromEntries(formData.entries());
+        const formJSON = JSON.stringify(formObject);
+
+        console.log('addModel:: POST call', formJSON);
+        fetch('/product', {
+            method: 'POST',
+            body: formData
+        }).then(response => response.json().then(data => ({ status: response.status, body: data })))
+            .then(({ status, body }) => {
+                console.error('Status:', status);
+                if (status === 201) {  // Check for the 201 Created status code
+                    // document.getElementById('addModal').hide()
+                    const modalElement = document.getElementById('addModal');
+                    const modal = bootstrap.Modal.getInstance(modalElement); // Get the modal instance
+                    modal.hide(); // Hide the modal
+                    document.getElementById('addForm').reset(); // Reset the form
+                    showPopup('Success', 'Product inserted successfully!');
+                    setTimeout(() => {
+                        window.location.href = window.location.origin + '/products';
+                    }, 2000);
+                } else {
+                    showPopup('Error', body.message || 'Failed to insert product.');
                     window.location.href = window.location.origin + '/products';
-                }, 2000);
-            } else {
-                showPopup('Error', body.message || 'Failed to insert product.');
-                window.location.href = window.location.origin + '/products';
-            }
-        }).catch(error => {
-            console.error('Error:', error);
-            showPopup('Error', 'An error occurred while inserting the product.');
-        });
+                }
+            }).catch(error => {
+                console.error('Error:', error);
+                showPopup('Error', 'An error occurred while inserting the product.');
+            });
+    });
 });
-// Filter on product name
-
-// document.addEventListener('DOMContentLoaded', function () {
-//     const filterInput = document.getElementById('filter_product');
-//     const productTableBody = document.getElementById('productTableBody');
-
-//     filterInput.addEventListener('input', function () {
-//         const query = this.value;
-
-//         // Send a request to the server to get the filtered products
-//         fetch(`/product/filter?query=${query}`)
-//             .then(response => response.json())
-//             .then(data => {
-//                 // Clear the current table rows
-//                 productTableBody.innerHTML = '';
-
-//                 // Populate the table with the filtered products
-//                 data.products.forEach(product => {
-//                     const row = `
-//                         <tr id="product-${product.id}">
-//                             <td>${product.id}</td>
-//                             <td>${product.category}</td>
-//                             <td>${product.name}</td>
-//                             <td>${new Date(product.introduce_date).toISOString().slice(0, 10)}</td>
-//                             <td>
-//                                 <button class="btn btn-warning btn-sm edit-btn" data-id="${product.id}">Edit</button>
-//                                 <button class="btn btn-danger btn-sm delete-btn" data-id="${product.id}">Delete</button>
-//                             </td>
-//                         </tr>
-//                     `;
-//                     productTableBody.insertAdjacentHTML('beforeend', row);
-//                 });
-//             })
-//             .catch(error => console.error('Error fetching filtered products:', error));
-//     });
-// });
 

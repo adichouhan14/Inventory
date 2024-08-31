@@ -14,4 +14,4 @@ class Sale(db.Model):
     product = db.relationship('Product', backref=db.backref('sales', lazy=True))
     
     def __repr__(self):
-        return f"<Sale Product ID {self.product_id} - Quantity {self.sales_quantity}>"
+        return f"<Sale Sales ID {self.id} - Quantity {self.sales_quantity}, {self.product_id}, {self.sales_rate}, {self.sales_amount}, {self.sales_date}>"
