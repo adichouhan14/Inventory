@@ -89,20 +89,20 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             body: formJSON
         }).then(response => response.json().then(data => ({ status: response.status, body: data })))
-        .then(({ status, body }) => {
-            if (status === 200) {
-                window.location.reload(); // Reload the page to show updated data
-            } else {
+            .then(({ status, body }) => {
+                if (status === 200) {
+                    window.location.reload(); // Reload the page to show updated data
+                } else {
+                    alert('An error occurred while updating the sale.');
+                }
+            }).catch(error => {
+                console.error('Error:', error);
                 alert('An error occurred while updating the sale.');
-            }
-        }).catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while updating the sale.');
-        });
+            });
 
     });
 
-
+    //Filter
     console.log('in sales....93')
     const filterSalesInput = document.getElementById('filter_sale');
     const salesTableBody = document.getElementById('salesTableBody');
@@ -140,34 +140,60 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => console.error('Error fetching filtered sales:', error));
     });
 
+    // Show add sales modal
+    console.log('Sales add.............')
+    document.getElementById('add_sale').addEventListener('click', function () {
+        console.log('click add sale button');
+        var addSalesModal = new bootstrap.Modal(document.getElementById('addSalesModal'));
+        addSalesModal.show();
+    });
+
+    // Handle form submission for adding a sale
+    document.getElementById('addSalesForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        console.log('addSalesModel:: POST call 1111');
+
+        const formData = new FormData(this);
+        // Convert FormData to a plain object
+        const formObject = Object.fromEntries(formData.entries());
+        const formJSON = JSON.stringify(formObject);
+
+        console.log('addSalesModel:: POST call', formJSON);
+        fetch('/sale', {
+            method: 'POST',
+            body: formData
+        }).then(response => response.json().then(data => ({ status: response.status, body: data })))
+            .then(({ status, body }) => {
+                console.error('Status:', status);
+                const modalElement = document.getElementById('addSalesModal');
+                const modal = bootstrap.Modal.getInstance(modalElement); // Get the modal instance
+                if (status === 201) {  // Check for the 201 Created status code
+                    modal.hide(); // Hide the modal
+                    document.getElementById('addSalesForm').reset(); // Reset the form
+                    showPopup('Success', 'Sale record inserted successfully!');
+                    setTimeout(() => {
+                        window.location.reload(); // Reload to reflect the new sale
+                    }, 2000);
+                } 
+                else if (status === 404) { 
+                    showPopup('Error', body.message || 'Product not found in Product table!');
+                    modal.hide();
+                    setTimeout(() => {
+                        window.location.reload(); // Reload to reflect the new sale
+                    }, 3000);
+                    
+                }
+                else {
+                    showPopup('Error', body.message || 'Failed to insert sale record.');
+                    modal.hide();
+                    setTimeout(() => {
+                        window.location.reload(); // Reload to reflect the new sale
+                    }, 3000);
+                    
+                }
+            }).catch(error => {
+                console.error('Error:', error);
+                showPopup('Error', 'An error occurred while inserting the sale record.');
+            });
+    });
 });
-
-//Add sales
-document.getElementById('addProductForm').addEventListener('submit', function (event) {
-    event.preventDefault();
-    const formData = new FormData(this);
-
-    fetch('/product', {
-        method: 'POST',
-        body: formData
-    }).then(response => response.json().then(data => ({ status: response.status, body: data })))
-        .then(({ status, body }) => {
-            console.error('Status:', status);
-            if (status === 201) {  // Check for the 201 Created status code
-                console.error('')
-                showPopup('Success', 'Product inserted successfully!');
-                setTimeout(() => {
-                    window.location.href = window.location.origin + '/products';
-                }, 2000);
-            } else {
-                showPopup('Error', body.message || 'Failed to insert product.');
-                window.location.href = window.location.origin + '/products';
-            }
-        }).catch(error => {
-            console.error('Error:', error);
-            showPopup('Error', 'An error occurred while inserting the product.');
-        });
-});
-
-
-

@@ -9,40 +9,46 @@ sales_bp = Blueprint('sales_bp', __name__)
 # Insert a new sale entry
 @sales_bp.route('/sale', methods=['POST'])
 def insert_sale():
-    data = request.get_json()
-    product_id = data['product_id']
-    sales_quantity = data['sales_quantity']
-    sales_rate = data['sales_rate']
-    sales_amount = sales_quantity * sales_rate
+    try:
+        data = request.form
+        print('data-->',data)
+        product_id = data['product_id']
+        sales_quantity = data['sales_quantity']
+        sales_rate = data['sales_rate']
+        sales_amount = int(sales_quantity) * float(sales_rate)
 
-    # Check if the product exists in the Product table
-    product = Product.query.get(product_id)
-    if not product:
-        return jsonify({"message": "Product not found in Product table!"}), 404
+        # Check if the product exists in the Product table
+        product = Product.query.get(product_id)
+        if not product:
+            print('Product not found in Product table!')
+            return jsonify({"message": "Product not found in Product table!"}), 404
 
-    # Insert into Sale table
-    new_sale = Sale(
-        product_id=product_id,
-        sales_quantity=sales_quantity,
-        sales_rate=sales_rate,
-        sales_amount=sales_amount,
-        sales_date=datetime.utcnow()
-    )
-    db.session.add(new_sale)
-    db.session.commit()
+        # Insert into Sale table
+        new_sale = Sale(
+            product_id=product_id,
+            sales_quantity=sales_quantity,
+            sales_rate=sales_rate,
+            sales_amount=sales_amount,
+            sales_date=datetime.utcnow()
+        )
+        db.session.add(new_sale)
+        db.session.commit()
 
-    # Update the Stock table
-    stock = Stock.query.get(product_id)
-    if stock:
-        stock.product_quantity -= sales_quantity
-        if stock.product_quantity < 0:
-            stock.product_quantity = 0  # Prevent negative stock quantities
-        stock.last_update_date = datetime.utcnow()
-    else:
-        return jsonify({"message": "Stock entry not found for the product!"}), 404
+        # Update the Stock table
+        stock = Stock.query.get(product_id)
+        if stock:
+            stock.product_quantity -= sales_quantity
+            if stock.product_quantity < 0:
+                stock.product_quantity = 0  # Prevent negative stock quantities
+            stock.last_update_date = datetime.utcnow()
+        else:
+            return jsonify({"message": "Stock entry not found for the product!"}), 404
 
-    db.session.commit()
-    return jsonify({"message": "Sale entry added successfully and stock updated!"}), 201
+        db.session.commit()
+        return jsonify({"message": "Sale entry added successfully and stock updated!"}), 201
+    except Exception as e:
+        print('Exception in sales-->', e)
+        return jsonify({"message": "Failed to insert sales."}), 500
 
 # Show all sale entries
 @sales_bp.route('/sales', methods=['GET'])
