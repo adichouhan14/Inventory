@@ -78,15 +78,10 @@
                         <select class="form-control form-select" id="productId" name="product_id" required>
                             <option id="productName" selected></option>
                             {% for product in products  %}
-                                <option value="{{ product.id }}">{{ product.name }}</option>
+                                <option value="{{ product.id }}"> {{ product.name }} </option>
                             {% endfor %}
                         </select>
                     </div>   
-
-                    <!-- <div class="mb-3">
-                        <label for="productName" class="form-label">Product Name</label>
-                        <input type="text" class="form-control" id="productName" name="product_name" required>
-                    </div> -->
                     <div class="mb-3">
                         <label for="purchaseQuantity" class="form-label">Quantity</label>
                         <input type="number" class="form-control" id="purchaseQuantity" name="purchase_quantity" required>

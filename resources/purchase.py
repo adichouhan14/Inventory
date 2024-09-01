@@ -63,7 +63,6 @@ def show_purchases():
     products = Product.query.all()
     return render_template('purchases.html', purchases=purchases,products=products, pagination=pagination)
 
-# Retrieve purchase data for editing
 @purchase_bp.route('/purchase/<int:id>', methods=['GET', 'PUT'])
 def update_purchase(id):
     if request.method == 'GET':
@@ -85,11 +84,12 @@ def update_purchase(id):
     # Handle the PUT method for updating the purchase entry
     data = request.get_json()
     purchase = Purchase.query.get(id)
+    print('update purchase data--->', data, '--->>', purchase, request)
     if not purchase:
         return jsonify({"message": "Purchase entry not found!"}), 404
 
     old_quantity = purchase.purchase_quantity
-    old_rate = purchase.purchase_rate
+    old_product_id = purchase.product_id
 
     # Update the Purchase table
     purchase.product_id = data.get('product_id', purchase.product_id)
@@ -98,15 +98,32 @@ def update_purchase(id):
     purchase.purchase_amount = int(purchase.purchase_quantity) * float(purchase.purchase_rate)
     purchase.purchase_date = datetime.utcnow()
 
-    db.session.commit()
+    # db.session.commit()
 
-    # Update the Stock table
-    stock = Stock.query.filter_by(product_id=purchase.product_id).first()
-    if stock:
-        stock.product_quantity += purchase.purchase_quantity - old_quantity
-        if stock.product_quantity < 0:
-            stock.product_quantity = 0  # Prevent negative stock quantities
-        stock.last_update_date = datetime.utcnow()
+    # Adjust the Stock for the old product
+    if old_product_id != purchase.product_id:
+        old_stock = Stock.query.filter_by(product_id=old_product_id).first()
+        if old_stock:
+            old_stock.product_quantity -= old_quantity
+            if old_stock.product_quantity < 0:
+                old_stock.product_quantity = 0  # Prevent negative stock quantities
+            old_stock.last_update_date = datetime.utcnow()
+
+    # Adjust the Stock for the new product
+    new_stock = Stock.query.filter_by(product_id=purchase.product_id).first()
+    if new_stock:
+        new_stock.product_quantity += int(purchase.purchase_quantity)
+        if new_stock.product_quantity < 0:
+            new_stock.product_quantity = 0  # Prevent negative stock quantities
+        new_stock.last_update_date = datetime.utcnow()
+    else:
+        # If no stock entry exists for the new product, create one
+        new_stock = Stock(
+            product_id=purchase.product_id,
+            product_quantity=purchase.purchase_quantity,
+            last_update_date=datetime.utcnow()
+        )
+        db.session.add(new_stock)
 
     db.session.commit()
     return jsonify({"message": "Purchase entry updated successfully and stock adjusted!"}), 200

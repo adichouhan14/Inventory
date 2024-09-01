@@ -71,6 +71,7 @@ def show_sales():
 def update_sale(id):
     if request.method == 'GET':
         sale = Sale.query.get(id)
+        print('sales data while updating:',sale)
         if not sale:
             return jsonify({"message": "Sale entry not found!"}), 404
 
@@ -85,51 +86,50 @@ def update_sale(id):
         }
         return jsonify(sale_data), 200
 
-    # Continue with the PUT method as already defined
+    # Handle the PUT method for updating the sale entry
     data = request.get_json()
     sale = Sale.query.get(id)
+    print('update sale data--->', data, '--->>', sale, request)
     if not sale:
         return jsonify({"message": "Sale entry not found!"}), 404
 
     old_quantity = sale.sales_quantity
-    old_rate = sale.sales_rate
+    old_product_id = sale.product_id
 
     # Update the Sale table
     sale.product_id = data.get('product_id', sale.product_id)
-    sale.sales_quantity = data.get('sales_quantity', sale.sales_quantity)
-    sale.sales_rate = data.get('sales_rate', sale.sales_rate)
+    sale.sales_quantity = data.get('sale_quantity', sale.sales_quantity)
+    sale.sales_rate = data.get('sale_rate', sale.sales_rate)
     sale.sales_amount = int(sale.sales_quantity) * float(sale.sales_rate)
     sale.sales_date = datetime.utcnow()
 
-    db.session.commit()
+    #db.session.commit()
 
-    # Update the Stock table
-    stock = Stock.query.filter_by(product_id=sale.product_id).first()
-    if stock:
-        stock.product_quantity += old_quantity - sale.sales_quantity
-        if stock.product_quantity < 0:
-            stock.product_quantity = 0  # Prevent negative stock quantities
-        stock.last_update_date = datetime.utcnow()
+    # Adjust the Stock for the old product
+    if old_product_id != sale.product_id:
+        old_stock = Stock.query.filter_by(product_id=old_product_id).first()
+        if old_stock:
+            old_stock.product_quantity += old_quantity  # Add back the old quantity to the old product's stock
+            old_stock.last_update_date = datetime.utcnow()
+
+    # Adjust the Stock for the new product
+    new_stock = Stock.query.filter_by(product_id=sale.product_id).first()
+    if new_stock:
+        new_stock.product_quantity -= int(sale.sales_quantity)  # Subtract the new quantity from the new product's stock
+        if new_stock.product_quantity < 0:
+            new_stock.product_quantity = 0  # Prevent negative stock quantities
+        new_stock.last_update_date = datetime.utcnow()
+    else:
+        # If no stock entry exists for the new product, create one with a negative quantity
+        new_stock = Stock(
+            product_id=sale.product_id,
+            product_quantity=-sale.sales_quantity,
+            last_update_date=datetime.utcnow()
+        )
+        db.session.add(new_stock)
 
     db.session.commit()
     return jsonify({"message": "Sale entry updated successfully and stock adjusted!"}), 200
-
-# Delete a sale entry
-@sales_bp.route('/sale/<int:id>', methods=['DELETE'])
-def delete_sale(id):
-    sale = Sale.query.get(id)
-    if not sale:
-        return jsonify({"message": "Sale entry not found!"}), 404
-
-    # Update the Stock table
-    stock = Stock.query.get(sale.product_id)
-    if stock:
-        stock.product_quantity += sale.sales_quantity  # Add the quantity back to stock
-        stock.last_update_date = datetime.utcnow()
-
-    db.session.delete(sale)
-    db.session.commit()
-    return jsonify({"message": "Sale entry deleted successfully and stock adjusted!"}), 200
 
 #Filter sales
 @sales_bp.route('/sale/filter')
