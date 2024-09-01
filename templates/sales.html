@@ -79,7 +79,7 @@
                     </div> -->
                     <div class="mb-3">
                         <label for="productId" class="form-label">Product</label>
-                        <select class="form-control form-select" id="productId" name="product_id" required>
+                        <select class="form-control form-select" id="productId" name="productName" required>
                             <option id="productName" selected></option>
                             {% for product in products  %}
                                 <option value="{{ product.id }}">{{ product.name }}</option>

@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request, render_template, url_for
 from db import db
 from models import Sale, Stock, Product
 from datetime import datetime
-
+import traceback
 # Create a Blueprint
 sales_bp = Blueprint('sales_bp', __name__)
 
@@ -69,67 +69,85 @@ def show_sales():
 # Retrieve sale data for editing
 @sales_bp.route('/sale/<int:id>', methods=['GET', 'PUT'])
 def update_sale(id):
-    if request.method == 'GET':
+    try:
+        if request.method == 'GET':
+            sale = Sale.query.get(id)
+            print('sales data while updating:',sale)
+            if not sale:
+                return jsonify({"message": "Sale entry not found!"}), 404
+
+            sale_data = {
+                'id': sale.id,
+                'product_id': sale.product_id,
+                'name': sale.product.name,
+                'sales_quantity': sale.sales_quantity,
+                'sales_rate': sale.sales_rate,
+                'sales_amount': sale.sales_amount,
+                'sales_date': sale.sales_date.strftime('%Y-%m-%d')
+            }
+            return jsonify(sale_data), 200
+
+        # Handle the PUT method for updating the sale entry
+        data = request.get_json()
         sale = Sale.query.get(id)
-        print('sales data while updating:',sale)
         if not sale:
             return jsonify({"message": "Sale entry not found!"}), 404
 
-        sale_data = {
-            'id': sale.id,
-            'product_id': sale.product_id,
-            'name': sale.product.name,
-            'sales_quantity': sale.sales_quantity,
-            'sales_rate': sale.sales_rate,
-            'sales_amount': sale.sales_amount,
-            'sales_date': sale.sales_date.strftime('%Y-%m-%d')
-        }
-        return jsonify(sale_data), 200
+        # Extract product name from the data
+        product_name = data.get('productName')
 
-    # Handle the PUT method for updating the sale entry
-    data = request.get_json()
-    sale = Sale.query.get(id)
-    print('update sale data--->', data, '--->>', sale, request)
-    if not sale:
-        return jsonify({"message": "Sale entry not found!"}), 404
+        # Fetch the product_id using product_name
+        product = Product.query.filter_by(name=product_name).first()
+        if not product:
+            print( f"Product with name '{product_name}' not found!")
+            return jsonify({"message": f"Product with name '{product_name}' not found!"}), 404
 
-    old_quantity = sale.sales_quantity
-    old_product_id = sale.product_id
+        product_id = product.id
+        old_quantity = sale.sales_quantity
+        old_product_id = sale.product_id
 
-    # Update the Sale table
-    sale.product_id = data.get('product_id', sale.product_id)
-    sale.sales_quantity = data.get('sale_quantity', sale.sales_quantity)
-    sale.sales_rate = data.get('sale_rate', sale.sales_rate)
-    sale.sales_amount = int(sale.sales_quantity) * float(sale.sales_rate)
-    sale.sales_date = datetime.utcnow()
-
-    #db.session.commit()
-
-    # Adjust the Stock for the old product
-    if old_product_id != sale.product_id:
-        old_stock = Stock.query.filter_by(product_id=old_product_id).first()
-        if old_stock:
-            old_stock.product_quantity += old_quantity  # Add back the old quantity to the old product's stock
-            old_stock.last_update_date = datetime.utcnow()
-
-    # Adjust the Stock for the new product
-    new_stock = Stock.query.filter_by(product_id=sale.product_id).first()
-    if new_stock:
-        new_stock.product_quantity -= int(sale.sales_quantity)  # Subtract the new quantity from the new product's stock
-        if new_stock.product_quantity < 0:
-            new_stock.product_quantity = 0  # Prevent negative stock quantities
-        new_stock.last_update_date = datetime.utcnow()
-    else:
-        # If no stock entry exists for the new product, create one with a negative quantity
-        new_stock = Stock(
-            product_id=sale.product_id,
-            product_quantity=-sale.sales_quantity,
-            last_update_date=datetime.utcnow()
-        )
-        db.session.add(new_stock)
-
-    db.session.commit()
-    return jsonify({"message": "Sale entry updated successfully and stock adjusted!"}), 200
+        # Update the Sale table
+        # sale.product_id = data.get('product_id', sale.product_id)
+        sale.product_id = product_id
+        sale.sales_quantity = int(data.get('sales_quantity', sale.sales_quantity))
+        sale.sales_rate = float(data.get('sale_rate', sale.sales_rate))
+        sale.sales_amount = sale.sales_quantity * sale.sales_rate
+        sale.sales_date = datetime.utcnow()
+        
+        # db.session.commit()
+        
+        # Adjust the Stock for the old product
+        if old_product_id != sale.product_id:
+            old_stock = Stock.query.filter_by(product_id=old_product_id).first()
+            if old_stock:
+                old_stock.product_quantity += old_quantity  # Add back the old quantity to the old product's stock
+                old_stock.last_update_date = datetime.utcnow()
+        db.session.add(sale)
+        
+        # Adjust the Stock for the new product
+        new_stock = Stock.query.filter_by(product_id=sale.product_id).first()
+        if new_stock:
+            print('new stock')
+            new_stock.product_quantity -= int(sale.sales_quantity)  # Subtract the new quantity from the new product's stock
+            if new_stock.product_quantity < 0:
+                new_stock.product_quantity = 0  # Prevent negative stock quantities
+            new_stock.last_update_date = datetime.utcnow()
+        else:
+            print('sales else')
+            # If no stock entry exists for the new product, create one with a negative quantity
+            new_stock = Stock(
+                product_id=sale.product_id,
+                product_quantity=-sale.sales_quantity,
+                last_update_date=datetime.utcnow()
+            )
+            db.session.add(new_stock)
+        
+        db.session.commit()
+        return jsonify({"message": "Sale entry updated successfully and stock adjusted!"}), 200
+    except Exception as e:
+        # Print traceback details in case of an error
+        traceback.print_exc()
+        return jsonify({"error": "An error occurred while updating the sale entry.", "details": str(e)}), 500
 
 #Filter sales
 @sales_bp.route('/sale/filter')
@@ -158,3 +176,20 @@ def filter_sale():
     } for sale in filtered_sales]
     print('sales_list-->',sales_list)
     return jsonify(sales=sales_list)
+
+# Delete a sale entry
+@sales_bp.route('/sale/<int:id>', methods=['DELETE'])
+def delete_sale(id):
+    sale = Sale.query.get(id)
+    if not sale:
+        return jsonify({"message": "Sale entry not found!"}), 404
+
+    # Update the Stock table
+    stock = Stock.query.get(sale.product_id)
+    if stock:
+        stock.product_quantity += sale.sales_quantity  # Add the quantity back to stock
+        stock.last_update_date = datetime.utcnow()
+
+    db.session.delete(sale)
+    db.session.commit()
+    return jsonify({"message": "Sale entry deleted successfully and stock adjusted!"}), 200
