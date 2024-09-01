@@ -52,3 +52,7 @@ h1 {
     height: auto;
     border-radius: 8px;
 }
+
+.navbar{
+    opacity: 0.88;
+}
