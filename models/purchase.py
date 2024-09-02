@@ -1,5 +1,8 @@
+# models/purchase.py
+
 from datetime import datetime
 from db import db
+
 # Purchase Table
 class Purchase(db.Model):
     __tablename__ = 'purchase'
@@ -10,6 +13,11 @@ class Purchase(db.Model):
     purchase_rate = db.Column(db.Float, nullable=False)
     purchase_amount = db.Column(db.Float, nullable=False)
     purchase_date = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # New Supplier details fields
+    supplier_name = db.Column(db.String(100), nullable=True)
+    supplier_contact = db.Column(db.String(100), nullable=True)
+    supplier_address = db.Column(db.String(255), nullable=True)
     
     product = db.relationship('Product', backref=db.backref('purchases', lazy=True))
     
