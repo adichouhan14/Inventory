@@ -105,22 +105,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.log('Response status:', status);
                 console.log('Response body:', body);
                 console.error('Status:', status);
-                const modalElement = document.getElementById('addPurchaseModal');
+                const modalElement = document.getElementById('editPurchaseModal');
                 const modal = bootstrap.Modal.getInstance(modalElement); // Get the modal instance
                 if (status === 201) {  // Check for the 201 Created status code
                     modal.hide(); // Hide the modal
-                    document.getElementById('addPurchaseForm').reset(); // Reset the form
-                    showPopup('Success', 'Purchase record inserted successfully!');
+                    document.getElementById('editPurchaseForm').reset(); // Reset the form
+                    showPopup('message', body.message || 'Purchase record updated successfully!');
                     setTimeout(() => {
                         window.location.reload(); // Reload to reflect the new purchase
                     }, 2000);
                 }
-                else if (status === 404) {
-                    showPopup('Error', body.message || 'Product not found in Product table!');
-                    modal.hide();
-                }
                 else {
-                    showPopup('Error', body.message || 'Failed to insert purchase.');
+                    showPopup('message', body.message || 'Failed to update purchase.');
                     modal.hide();
                 }
             }).catch(error => {

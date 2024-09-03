@@ -149,7 +149,7 @@ def update_sale(id):
     except Exception as e:
         # Print traceback details in case of an error
         traceback.print_exc()
-        return jsonify({"error": "An error occurred while updating the sale entry.", "details": str(e)}), 500
+        return jsonify({"message": "An error occurred while updating the sale entry.", "details": str(e)}), 500
 
 # Filter sales
 @sales_bp.route('/sale/filter')

@@ -96,10 +96,22 @@ document.addEventListener('DOMContentLoaded', function () {
             body: formJSON
         }).then(response => response.json().then(data => ({ status: response.status, body: data })))
             .then(({ status, body }) => {
-                if (status === 200) {
-                    window.location.reload(); // Reload the page to show updated data
-                } else {
-                    alert('An error occurred while updating the sale.');
+                const modalElement = document.getElementById('addSalesModal');
+                const modal = bootstrap.Modal.getInstance(modalElement); // Get the modal instance
+                if (status === 201) {  // Check for the 201 Created status code
+                    modal.hide(); // Hide the modal
+                    document.getElementById('addSalesForm').reset(); // Reset the form
+                    showPopup('Success', 'Sale record updated successfully!');
+                    setTimeout(() => {
+                        window.location.reload(); // Reload to reflect the new sale
+                    }, 2000);
+                } 
+                else {
+                    showPopup('Error', body.message || 'Failed to update sale record.');
+                    modal.hide();
+                    setTimeout(() => {
+                        window.location.reload(); // Reload to reflect the new sale
+                    }, 3000);
                 }
             }).catch(error => {
                 console.error('Error:', error);
@@ -143,12 +155,12 @@ document.addEventListener('DOMContentLoaded', function () {
                             </td>
                         </tr>
                     `;
-                    salesTableBody.insertAdjacentHTML('beforeend', row);
+                    salesTableBody.insertAdjacentHTML('beforeend', row);   
                 });
             })
             .catch(error => console.error('Error fetching filtered sales:', error));
     });
-
+    
     // Show add sales modal
     console.log('Sales add.............')
     document.getElementById('add_sale').addEventListener('click', function () {
@@ -156,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var addSalesModal = new bootstrap.Modal(document.getElementById('addSalesModal'));
         addSalesModal.show();
     });
-
+    console.log('Sales add.............159')
     // Handle form submission for adding a sale
     document.getElementById('addSalesForm').addEventListener('submit', function (e) {
         e.preventDefault();
@@ -184,21 +196,12 @@ document.addEventListener('DOMContentLoaded', function () {
                         window.location.reload(); // Reload to reflect the new sale
                     }, 2000);
                 } 
-                else if (status === 404) { 
-                    showPopup('Error', body.message || 'Product not found in Product table!');
-                    modal.hide();
-                    setTimeout(() => {
-                        window.location.reload(); // Reload to reflect the new sale
-                    }, 3000);
-                    
-                }
                 else {
                     showPopup('Error', body.message || 'Failed to insert sale record.');
                     modal.hide();
                     setTimeout(() => {
                         window.location.reload(); // Reload to reflect the new sale
                     }, 3000);
-                    
                 }
             }).catch(error => {
                 console.error('Error:', error);
