@@ -58,11 +58,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     // Populate the form with the sale data
                     document.getElementById('saleId').value = data.id;
-                    document.getElementById('productName').value = data.name;
+                    document.getElementById('productName').value = data.product_id;
                     document.getElementById('productName').textContent = data.name;
                     document.getElementById('salesQuantity').value = data.sales_quantity;
                     document.getElementById('salesRate').value = data.sales_rate;
                     document.getElementById('salesAmount').value = data.sales_amount;
+
+                    // Populate customer details
+                    document.getElementById('customerName').value = data.customer_name;
+                    document.getElementById('contactNo').value = data.contact_no;
+                    document.getElementById('customerAddress').value = data.customer_address;
 
                     // Show the modal
                     var editModal = new bootstrap.Modal(document.getElementById('editSalesModal'));
@@ -103,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     });
 
-    //Filter
+    // Filter sales
     console.log('in sales....93')
     const filterSalesInput = document.getElementById('filter_sale');
     const salesTableBody = document.getElementById('salesTableBody');
@@ -111,14 +116,14 @@ document.addEventListener('DOMContentLoaded', function () {
     filterSalesInput.addEventListener('input', function () {
         const query = this.value;
         console.log('Inside filter sales')
-        // Send a request to the server to get the filtered products
+        // Send a request to the server to get the filtered sales
         fetch(`/sale/filter?query=${query}`)
             .then(response => response.json())
             .then(data => {
                 // Clear the current table rows
                 salesTableBody.innerHTML = '';
 
-                // Populate the table with the filtered products
+                // Populate the table with the filtered sales
                 console.log('data-->', data)
                 data.sales.forEach(sale => {
                     const row = `
@@ -129,6 +134,9 @@ document.addEventListener('DOMContentLoaded', function () {
                             <td>${sale.sales_rate}</td>
                             <td>${sale.sales_amount}</td>
                             <td>${new Date(sale.sales_date).toISOString().slice(0, 10)}</td>
+                            <td>${sale.customer_name}</td>
+                            <td>${sale.contact_no}</td>
+                            <td>${sale.customer_address}</td>
                             <td>
                                 <button class="btn btn-warning btn-sm edit-btn1" data-id="${sale.id}">Edit</button>
                                 <button class="btn btn-danger btn-sm delete-btn1" data-id="${sale.id}">Delete</button>

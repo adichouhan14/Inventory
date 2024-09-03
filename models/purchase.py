@@ -9,7 +9,7 @@ class Purchase(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
-    purchase_quantity = db.Column(db.Integer, nullable=False)
+    purchase_quantity = db.Column(db.Float, nullable=False)
     purchase_rate = db.Column(db.Float, nullable=False)
     purchase_amount = db.Column(db.Float, nullable=False)
     purchase_date = db.Column(db.DateTime, default=datetime.utcnow)

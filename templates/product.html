@@ -83,7 +83,12 @@
                     </div>
                     <div class="mb-3">
                         <label for="recordCategory" class="form-label">Category</label>
-                        <input type="text" class="form-control" id="recordCategory" name="category">
+                        <!-- <input type="text" class="form-control" id="recordCategory" name="category"> -->
+                        <select id="recordCategory" name="category">
+                            {% for category in categories %}
+                                <option value="{{ category.name }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label for="recordName" class="form-label">Name</label>

@@ -4,3 +4,4 @@ virtualenv
 .idea
 .venv
 virtile
+drop_tables.py
