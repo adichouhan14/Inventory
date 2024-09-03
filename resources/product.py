@@ -2,7 +2,7 @@
 from models import *
 from datetime import datetime
 from flask import Flask, request, jsonify, Blueprint
-from db import db
+from db import db, product_unit
 from sqlalchemy import or_
 
 product_bp = Blueprint('product_bp', __name__)
@@ -16,6 +16,8 @@ def get_product(id):
             'id': product.id,
             'name': product.name,
             'category': product.category.name,  # Assuming relationship with Category
+            'unit': product.unit,
+            'unit_text': product_unit[product.unit],
             'introduce_date': product.introduce_date.strftime('%Y-%m-%d')
         })
     else:
@@ -25,14 +27,16 @@ def get_product(id):
 @product_bp.route('/product', methods=['POST'])
 def insert_product():
     try:
-        data = request.json
-        category = Category.query.filter_by(name=data['category']).first()
-        if not category:
-            return jsonify({"message": "Category not found!"}), 404
-
+        print('request post product',request)
+        data = request.form
+        #category = Category.query.filter_by(name=data['category']).first()
+        # if not category:
+        #     return jsonify({"message": "Category not found!"}), 404
+        print('calling post product data:',data)
         new_product = Product(
             name=data['name'],
-            category=category,
+            category_id=data['category_id'],
+            unit = 1,
             introduce_date=datetime.utcnow()  # or data['introduce_date'] if provided
         )
         db.session.add(new_product)
@@ -47,21 +51,21 @@ def insert_product():
 # Update an existing product
 @product_bp.route('/product/<int:id>', methods=['PUT'])
 def update_product(id):
-    data = request.json
-    product = Product.query.get(id)
-    if not product:
-        return jsonify({"message": "Product not found!"}), 404
+    try:
+        data = request.get_json()
+        product = Product.query.get(id)
+        product.name = data.get('name', product.name)
+        product.category_id = data.get('category_id',product.category_id) 
+        product.introduce_date = data.get('introduce_date', product.introduce_date)
 
-    category = Category.query.filter_by(name=data.get('category', product.category.name)).first()
-    if not category:
-        return jsonify({"message": "Category not found!"}), 404
-
-    product.name = data.get('name', product.name)
-    product.category = category
-    product.introduce_date = data.get('introduce_date', product.introduce_date)
-
-    db.session.commit()
-    return jsonify({"message": "Product updated successfully!"}), 200
+        db.session.commit()
+        return jsonify({"message": "Product updated successfully!"}), 200
+    
+    except Exception as e:
+        # Print traceback details in case of an error
+        #traceback.print_exc()
+        return jsonify({"message": "An error occurred while updating the product entry.", "details": str(e)}), 500
+    
 
 # Delete a product
 @product_bp.route('/product/<int:id>', methods=['DELETE'])
@@ -98,13 +102,16 @@ def show_products_by_category(category):
 @product_bp.route('/product/filter', methods=['GET'])
 def filter_products():
     query = request.args.get('query', '', type=str).strip()
-
-    filtered_products = Product.query.join(Category).filter(
-        or_(
-            Product.name.ilike(f'%{query}%'),
-            Category.name.ilike(f'%{query}%')
-        )
-    ).all()
+    if query.isdigit():
+        filtered_products = Product.query.filter(Product.id == int(query)).all()
+        print('filtered_product id-->', filtered_products)
+    else:
+        filtered_products = Product.query.join(Category).filter(
+            or_(
+                Product.name.ilike(f'%{query}%'),
+                Category.name.ilike(f'%{query}%')
+            )
+        ).all()
 
     if not filtered_products:
         return jsonify({"message": "No products match the filter criteria."}), 404
@@ -117,3 +124,20 @@ def filter_products():
     } for product in filtered_products]
 
     return jsonify(products=products_list)
+
+# Show categories
+@product_bp.route('/products/category/', methods=['GET'])
+def get_category():
+    categories = Category.query.all()  # Fetch all categories
+    if not categories:
+        return jsonify({"message": "No categories found!"}), 404
+
+    category_list = []
+    for category in categories:
+        category_data = {
+            'id': category.id,
+            'name': category.name
+        }
+        category_list.append(category_data)
+
+    return jsonify(category_list), 200

@@ -8,4 +8,4 @@ class Category(db.Model):
     name = db.Column(db.String(100), nullable=False, unique=True)
     
     def __repr__(self):
-        return f"<Category {self.name}>"
+        return f"{self.name}"

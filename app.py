@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, render_template
 #from flask_sqlalchemy import SQLAlchemy
 from models import *
 # from models.product import Product
-from db import db
+from db import db, product_unit
 from flask_migrate import Migrate
 from resources.product import product_bp
 from resources.stock import stock_bp
@@ -51,8 +51,9 @@ def product():
     pagination = Product.query.paginate(page=page, per_page=per_page, error_out=False)
     
     products = pagination.items
-
-    return render_template('product.html', products=products, pagination=pagination)
+    categories = Category.query.all()
+    print('categories called from get product end point',categories)
+    return render_template('product.html', categories=categories, products=products, product_unit=product_unit, pagination=pagination)
 
 if __name__ == '__main__':
     # with app.app_context():

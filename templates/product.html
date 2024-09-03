@@ -11,60 +11,49 @@
 
 
 {% block table_headers %}
-    <th>Product ID</th>
-    <th>Category</th>
-    <th>Product Name</th>
-    <th>Date of Introduction</th>
+<th>Product ID</th>
+<th>Category</th>
+<th>Product Name</th>
+<th>Date of Introduction</th>
 {% endblock %}
 
 {% block table_rows %}
-    <!-- Assuming you are passing the products data from the backend -->
-    {% for product in products %}
-    <tr id="product-{{ product.id }}">
-        <td>{{ product.id }}</td>
-        <td>{{ product.category }}</td>
-        <td>{{ product.name }}</td>
-        <td>{{ product.introduce_date.strftime('%Y-%m-%d') }}</td>
-        <td>
-            <button class="btn btn-warning btn-sm edit-btn" data-id="{{ product.id }}" >Edit</button>
-            <button class="btn btn-danger btn-sm delete-btn" data-id="{{ product.id }}">Delete</button>
-        </td>
-    </tr>
-    
-    {% endfor %}
+<!-- Assuming you are passing the products data from the backend -->
+{% for product in products %}
+<tr id="product-{{ product.id }}">
+    <td>{{ product.id }}</td>
+    <td>{{ product.category }}</td>
+    <td>{{ product.name }}</td>
+    <td>{{ product.introduce_date.strftime('%Y-%m-%d') }}</td>
+    <td>
+        <button class="btn btn-warning btn-sm edit-btn" data-id="{{ product.id }}">Edit</button>
+        <button class="btn btn-danger btn-sm delete-btn" data-id="{{ product.id }}">Delete</button>
+    </td>
+</tr>
+
+{% endfor %}
 
 <!-- Modal for Delete Confirmation -->
-<div
-  class="modal fade"
-  id="deleteModal"
-  tabindex="-1"
-  aria-labelledby="deleteModalLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="deleteModalLabel">Delete Confirmation</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
-      </div>
-      <div class="modal-body">
-        Are you sure you want to delete this product?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-          No
-        </button>
-        <button type="button" class="btn btn-danger" id="confirmDelete">
-          Yes
-        </button>
-      </div>
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Delete Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this product?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    No
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmDelete">
+                    Yes
+                </button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 <!-- edit_modal.html -->
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
@@ -75,7 +64,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                
+
                 <form id="editForm">
                     <div class="mb-3">
                         <label for="recordId" class="form-label">ID</label>
@@ -83,13 +72,14 @@
                     </div>
                     <div class="mb-3">
                         <label for="recordCategory" class="form-label">Category</label>
-                        <!-- <input type="text" class="form-control" id="recordCategory" name="category"> -->
-                        <select id="recordCategory" name="category">
+                        <select class="form-control form-select" name="category_id">
+                            <option id="recordCategoryedit" selected></option>
                             {% for category in categories %}
-                                <option value="{{ category.name }}">{{ category.name }}</option>
+                                <option value="{{ category.id }}">{{ category.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
+ 
                     <div class="mb-3">
                         <label for="recordName" class="form-label">Name</label>
                         <input type="text" class="form-control" id="recordName" name="name">
@@ -100,7 +90,7 @@
                     </div>
                 </form>
             </div>
-            
+
         </div>
     </div>
 </div>
@@ -114,15 +104,29 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                
+
                 <form id="addForm">
                     <div class="mb-3">
                         <label for="recordCategory" class="form-label">Category</label>
-                        <input type="text" class="form-control" id="recordCategory" name="category">
+                        <select class="form-control form-select" id="recordCategory" name="category_id" required>
+                            <option selected>Select Product</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label for="recordName" class="form-label">Name</label>
                         <input type="text" class="form-control" id="recordName" name="name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="recordUnit" class="form-label">Unit</label>
+                        <select class="form-control form-select" id="recordUnit" name="recordUnit" required>
+                            
+                        {% for key,value in product_unit.items() %}
+                            <option value="{{ key }}">{{ value }}</option>
+                        {% endfor %}
+                        </select>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -130,12 +134,10 @@
                     </div>
                 </form>
             </div>
-            
+
         </div>
     </div>
 </div>
 
 
-{% endblock %} 
-
-
+{% endblock %}

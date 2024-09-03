@@ -53,11 +53,12 @@ document.addEventListener('DOMContentLoaded', function () {
             fetch('/product/' + editProductId)
                 .then(response => response.json())
                 .then(data => {
-                    console.log('data:::', data);
+                    console.log('edit product called data:::', data);
                     // Populate the form with the product data
                     document.getElementById('recordId').value = data.id;
                     document.getElementById('recordName').value = data.name;
-                    document.getElementById('recordCategory').value = data.category;
+                    document.getElementById('recordCategoryedit').value = data.category;
+                    document.getElementById('recordCategoryedit').textContent = data.category;
                     // Show the modal
                     // console.log('document.getElementById:::', document.getElementById('category'));
                     var editModal = new bootstrap.Modal(document.getElementById('editModal'));
@@ -74,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('editModel:: Update calll 1111');
         const formData = new FormData(this);
         const formJSON = JSON.stringify(Object.fromEntries(formData));
-        console.log('editModel:: Update calll');
+        console.log('editModel:: Update calll',formJSON);
         fetch('/product/' + editProductId, {
             method: 'PUT',
             headers: {
@@ -84,10 +85,19 @@ document.addEventListener('DOMContentLoaded', function () {
         }).then(response => response.json().then(data => ({ status: response.status, body: data })))
             .then(({ status, body }) => {
                 console.error('Status update:', status);
-                if (status === 200) {
-                    window.location.reload(); // Reload the page to show updated data
-                } else {
-                    alert('An error occurred while updating the product.');
+                const modalElement = document.getElementById('editModal');
+                const modal = bootstrap.Modal.getInstance(modalElement); // Get the modal instance
+                if (status === 200) {  // Check for the 201 Created status code
+                    modal.hide(); // Hide the modal
+                    document.getElementById('addForm').reset(); // Reset the form
+                    showPopup('Success', 'Product record updated successfully!');
+                    setTimeout(() => {
+                        window.location.reload(); // Reload to reflect the new purchase
+                    }, 2000);
+                } 
+                else {
+                    showPopup('Error', body.message || 'Failed to update product.');
+                    modal.hide();
                 }
             }).catch(error => {
                 console.error('Error:', error);
