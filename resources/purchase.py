@@ -24,8 +24,8 @@ def insert_purchase():
         product_id = data['product_id']
         purchase_quantity = float(data['purchase_quantity'])
         purchase_rate = float(data['purchase_rate'])
-        purchase_amount = purchase_quantity * purchase_rate
-
+        purchase_amount = round(purchase_quantity * purchase_rate,2)
+        purchase_date = datetime.strptime(data['add_purchase_date'], '%Y-%m-%d') 
         # Optional supplier details
         supplier_name = data.get('supplier_name', None)
         supplier_contact = data.get('supplier_contact', None)
@@ -42,7 +42,7 @@ def insert_purchase():
             purchase_quantity=purchase_quantity,
             purchase_rate=purchase_rate,
             purchase_amount=purchase_amount,
-            purchase_date=datetime.utcnow(),
+            purchase_date=purchase_date,
             supplier_name=supplier_name,
             supplier_contact=supplier_contact,
             supplier_address=supplier_address
@@ -118,7 +118,7 @@ def update_purchase(id):
     purchase.product_id = data.get('product_id', purchase.product_id)
     purchase.purchase_quantity = data.get('purchase_quantity', purchase.purchase_quantity)
     purchase.purchase_rate = data.get('purchase_rate', purchase.purchase_rate)
-    purchase.purchase_amount = float(purchase.purchase_quantity) * float(purchase.purchase_rate)
+    purchase.purchase_amount = round(float(purchase.purchase_quantity) * float(purchase.purchase_rate),2)
     purchase.purchase_date = datetime.utcnow()
 
     # Update optional supplier details

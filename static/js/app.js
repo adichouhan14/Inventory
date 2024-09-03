@@ -208,6 +208,10 @@ function showPopup(title, message) {
     actionModal.show();
 }
 
+function setTodayDate(elementId) {
+    var today = new Date().toISOString().split('T')[0];
+    document.getElementById(elementId).value = today;
+}
 
 // function showPopup(title, message) {
 //     const popupModal = new bootstrap.Modal(document.getElementById('genericPopup'));

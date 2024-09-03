@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
+    
+    setTodayDate("addSellDate")
     let deleteSalesId = null;
 
     console.log('DOM loaded successfully...in Sales');

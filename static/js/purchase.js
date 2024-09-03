@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
+
+    setTodayDate("addPurchaseDate")
+
     let deletePurchaseId = null;
 
     console.log('DOM loaded successfully...in Purchases');

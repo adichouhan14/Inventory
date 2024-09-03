@@ -16,8 +16,8 @@ def insert_sale():
         product_id = data['product_id']
         sales_quantity = int(data['sales_quantity'])
         sales_rate = float(data['sales_rate'])
-        sales_amount = sales_quantity * sales_rate
-
+        sales_amount = round(sales_quantity * sales_rate,2)
+        sales_date = datetime.strptime(data['add_sale_date'], '%Y-%m-%d') 
         customer_name = data['customer_name']
         contact_no = data['contact_no']
         customer_address = data.get('customer_address', '')
@@ -32,8 +32,8 @@ def insert_sale():
         stock = db.session.query(Stock).filter(Stock.product_id == product_id).first()
         if not stock:
             return jsonify({"message": "Stock entry not found for the product!"}), 404
-        if stock.product_quantity < sales_quantity:
-            return jsonify({"message": "Insufficient stock available!"}), 400
+        # if stock.product_quantity < sales_quantity:
+        #     return jsonify({"message": "Insufficient stock available!"}), 400
 
         # Insert into Sale table
         new_sale = Sale(
@@ -41,7 +41,7 @@ def insert_sale():
             sales_quantity=sales_quantity,
             sales_rate=sales_rate,
             sales_amount=sales_amount,
-            sales_date=datetime.utcnow(),
+            sales_date=sales_date,
             customer_name=customer_name,
             contact_no=contact_no,
             customer_address=customer_address
@@ -111,7 +111,7 @@ def update_sale(id):
         sale.product_id = data.get('product_id', sale.product_id)
         sale.sales_quantity = float(data.get('sales_quantity', sale.sales_quantity))
         sale.sales_rate = float(data.get('sales_rate', sale.sales_rate))
-        sale.sales_amount = sale.sales_quantity * sale.sales_rate
+        sale.sales_amount = round(sale.sales_quantity * sale.sales_rate,2)
         sale.sales_date = datetime.utcnow()
 
         sale.customer_name = data.get('customer_name', sale.customer_name)
