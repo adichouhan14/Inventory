@@ -11,11 +11,11 @@
 
 {% block table_headers %}
 <th>Purchase ID</th>
+<th>Date of Purchase</th>
 <th>Product Name</th>
 <th>Purchase Quantity</th>
 <th>Purchase Rate</th>
 <th>Purchase Amount</th>
-<th>Date of Purchase</th>
 <th>Supplier Name</th>
 <th>Supplier Contact</th>
 <th>Supplier Address</th>
@@ -26,11 +26,11 @@
 {% for purchase in purchases %}
 <tr id="purchase-{{ purchase.id }}">
     <td>{{ purchase.id }}</td>
+    <td>{{ purchase.purchase_date.strftime('%Y-%m-%d') }}</td>
     <td>{{ purchase.product.name }}</td>
     <td>{{ purchase.purchase_quantity }}</td>
     <td>{{ purchase.purchase_rate }}</td>
     <td>{{ purchase.purchase_amount }}</td>
-    <td>{{ purchase.purchase_date.strftime('%Y-%m-%d') }}</td>
     <td>{{ purchase.supplier_name }}</td>
     <td>{{ purchase.supplier_contact }}</td>
     <td>{{ purchase.supplier_address }}</td>
@@ -85,7 +85,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="purchaseQuantity" class="form-label">Quantity</label>
-                        <input type="number" class="form-control" id="purchaseQuantity" name="purchase_quantity" required>
+                        <input type="number" step="0.01" class="form-control" id="purchaseQuantity" name="purchase_quantity" required>
                     </div>
                     <div class="mb-3">
                         <label for="purchaseRate" class="form-label">Rate</label>
@@ -139,7 +139,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="purchaseQuantity" class="form-label">Purchase Quantity</label>
-                        <input type="number" class="form-control" id="purchaseQuantity" name="purchase_quantity" required>
+                        <input type="number" step="0.01" class="form-control" id="purchaseQuantity" name="purchase_quantity" required>
                     </div>
                     <div class="mb-3">
                         <label for="purchaseRate" class="form-label">Purchase Rate</label>

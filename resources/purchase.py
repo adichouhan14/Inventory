@@ -22,7 +22,7 @@ def insert_purchase():
         
         print('data-->', data)
         product_id = data['product_id']
-        purchase_quantity = int(data['purchase_quantity'])
+        purchase_quantity = float(data['purchase_quantity'])
         purchase_rate = float(data['purchase_rate'])
         purchase_amount = purchase_quantity * purchase_rate
 
@@ -118,7 +118,7 @@ def update_purchase(id):
     purchase.product_id = data.get('product_id', purchase.product_id)
     purchase.purchase_quantity = data.get('purchase_quantity', purchase.purchase_quantity)
     purchase.purchase_rate = data.get('purchase_rate', purchase.purchase_rate)
-    purchase.purchase_amount = int(purchase.purchase_quantity) * float(purchase.purchase_rate)
+    purchase.purchase_amount = float(purchase.purchase_quantity) * float(purchase.purchase_rate)
     purchase.purchase_date = datetime.utcnow()
 
     # Update optional supplier details
@@ -138,7 +138,7 @@ def update_purchase(id):
     # Adjust the Stock for the new product
     new_stock = Stock.query.filter_by(product_id=purchase.product_id).first()
     if new_stock:
-        new_stock.product_quantity += int(purchase.purchase_quantity)
+        new_stock.product_quantity += float(purchase.purchase_quantity)
         if new_stock.product_quantity < 0:
             new_stock.product_quantity = 0  # Prevent negative stock quantities
         new_stock.last_update_date = datetime.utcnow()
