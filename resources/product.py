@@ -11,10 +11,12 @@ product_bp = Blueprint('product_bp', __name__)
 @product_bp.route('/product/<int:id>', methods=['GET'])
 def get_product(id):
     product = Product.query.get(id)
+    print('get product -->>',product)
     if product:
         return jsonify({
             'id': product.id,
             'name': product.name,
+            'category_id' : product.category_id,
             'category': product.category.name,  # Assuming relationship with Category
             'unit': product.unit,
             'unit_text': product_unit[product.unit],
@@ -54,8 +56,11 @@ def update_product(id):
     try:
         data = request.get_json()
         product = Product.query.get(id)
+        print('put product data',data)
+        print('put product',product,product.unit)
         product.name = data.get('name', product.name)
         product.category_id = data.get('category_id',product.category_id) 
+        product.unit = int(data.get('recordUnit',product.unit))
         product.introduce_date = data.get('introduce_date', product.introduce_date)
 
         db.session.commit()
@@ -64,6 +69,7 @@ def update_product(id):
     except Exception as e:
         # Print traceback details in case of an error
         #traceback.print_exc()
+        print('Exception:::',e)
         return jsonify({"message": "An error occurred while updating the product entry.", "details": str(e)}), 500
     
 

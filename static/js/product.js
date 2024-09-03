@@ -59,6 +59,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('recordName').value = data.name;
                     document.getElementById('recordCategoryedit').value = data.category;
                     document.getElementById('recordCategoryedit').textContent = data.category;
+                    document.getElementById('editproductunit').value = data.unit;
+                    document.getElementById('editproductunit').textContent = data.unit_text;
+                    
                     // Show the modal
                     // console.log('document.getElementById:::', document.getElementById('category'));
                     var editModal = new bootstrap.Modal(document.getElementById('editModal'));
