@@ -65,6 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('salesQuantity').value = data.sales_quantity;
                     document.getElementById('salesRate').value = data.sales_rate;
                     document.getElementById('salesAmount').value = data.sales_amount;
+                    document.getElementById('editsaleDate').value = data.sales_date;
 
                     // Populate customer details
                     document.getElementById('customerName').value = data.customer_name;
@@ -98,9 +99,10 @@ document.addEventListener('DOMContentLoaded', function () {
             body: formJSON
         }).then(response => response.json().then(data => ({ status: response.status, body: data })))
             .then(({ status, body }) => {
-                const modalElement = document.getElementById('addSalesModal');
+                console.log('edit sale status',status)
+                const modalElement = document.getElementById('editSalesModal');
                 const modal = bootstrap.Modal.getInstance(modalElement); // Get the modal instance
-                if (status === 201) {  // Check for the 201 Created status code
+                if (status === 200) {  // Check for the 201 Created status code
                     modal.hide(); // Hide the modal
                     document.getElementById('addSalesForm').reset(); // Reset the form
                     showPopup('Success', 'Sale record updated successfully!');

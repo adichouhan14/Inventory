@@ -112,8 +112,8 @@ def update_sale(id):
         sale.sales_quantity = float(data.get('sales_quantity', sale.sales_quantity))
         sale.sales_rate = float(data.get('sales_rate', sale.sales_rate))
         sale.sales_amount = round(sale.sales_quantity * sale.sales_rate,2)
-        sale.sales_date = datetime.utcnow()
-
+        # sale.sales_date = datetime.utcnow()
+        sale.sales_date = datetime.strptime(data['edit_sale_date'], '%Y-%m-%d')
         sale.customer_name = data.get('customer_name', sale.customer_name)
         sale.contact_no = data.get('contact_no', sale.contact_no)
         sale.customer_address = data.get('customer_address', sale.customer_address)

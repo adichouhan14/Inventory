@@ -67,6 +67,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('purchaseQuantity').value = data.purchase_quantity;
                     document.getElementById('purchaseRate').value = data.purchase_rate;
                     document.getElementById('purchaseAmount').value = data.purchase_amount;
+                    document.getElementById('editPurchaseDate').value = data.purchase_date;
+                    
                     // Check and populate the supplier fields if they exist in the data
                     if (data.supplier_name) {
                         document.getElementById('supplierName').value = data.supplier_name;
@@ -110,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.error('Status:', status);
                 const modalElement = document.getElementById('editPurchaseModal');
                 const modal = bootstrap.Modal.getInstance(modalElement); // Get the modal instance
-                if (status === 201) {  // Check for the 201 Created status code
+                if (status === 200) {  // Check for the 201 Created status code
                     modal.hide(); // Hide the modal
                     document.getElementById('editPurchaseForm').reset(); // Reset the form
                     showPopup('message', body.message || 'Purchase record updated successfully!');

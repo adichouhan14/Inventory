@@ -119,8 +119,8 @@ def update_purchase(id):
     purchase.purchase_quantity = data.get('purchase_quantity', purchase.purchase_quantity)
     purchase.purchase_rate = data.get('purchase_rate', purchase.purchase_rate)
     purchase.purchase_amount = round(float(purchase.purchase_quantity) * float(purchase.purchase_rate),2)
-    purchase.purchase_date = datetime.utcnow()
-
+    # purchase.purchase_date = datetime.utcnow()
+    purchase.purchase_date = datetime.strptime(data['edit_purchase_date'], '%Y-%m-%d') 
     # Update optional supplier details
     purchase.supplier_name = data.get('supplier_name', purchase.supplier_name)
     purchase.supplier_contact = data.get('supplier_contact', purchase.supplier_contact)
