@@ -65,6 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('productId').value = data.product_id; // Assuming you're using product_id in the form
                     document.getElementById('productName').textContent = data.name; // Update product name
                     document.getElementById('purchaseQuantity').value = data.purchase_quantity;
+                    document.getElementById('purchaseEditUnit').textContent = data.purchase_quantity_unit;
                     document.getElementById('purchaseRate').value = data.purchase_rate;
                     document.getElementById('purchaseAmount').value = data.purchase_amount;
                     document.getElementById('editPurchaseDate').value = data.purchase_date;

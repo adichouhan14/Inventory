@@ -13,7 +13,7 @@
 <th>Stock ID</th>
 <th>Last update date</th>
 <th>Product Name</th>
-<th>Purchase Quantity</th>
+<th>Stock Quantity</th>
 {% endblock %}
 
 {% block table_rows %}
@@ -23,7 +23,7 @@
     <td>{{ stock.id }}</td>
     <td>{{ stock.last_update_date.strftime('%Y-%m-%d') }}</td>
     <td>{{ stock.name }}</td>
-    <td>{{ stock.product_quantity }}</td>
+    <td>{{ stock.product_quantity }} {{stock.unit}}</td>
     <td>
         <button class="btn btn-warning btn-sm edit-btn3" data-id="{{ stock.id }}" disabled>Edit</button>
         <button class="btn btn-danger btn-sm delete-btn3" data-id="{{ stock.id }}" disabled>Delete</button>

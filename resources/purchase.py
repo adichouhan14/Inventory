@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, render_template
-from db import db
+from db import db, product_unit
 from models import Purchase, Stock, Product
 from datetime import datetime
 import traceback
@@ -77,10 +77,11 @@ def show_purchases():
     per_page = 10
     pagination = Purchase.query.paginate(page=page, per_page=per_page, error_out=False)
     purchases = pagination.items
-    for purchase in purchases:
-        purchase.name = purchase.product.name
+    # for purchase in purchases:
+    #     purchase.name = purchase.product.name
+    #     purchase.unit = product_unit.get(purchase.product.unit,"Unknown")
     products = Product.query.all()
-    return render_template('purchases.html', purchases=purchases,products=products, pagination=pagination)
+    return render_template('purchases.html', purchases=purchases,products=products, product_unit=product_unit, pagination=pagination)
 
 @purchase_bp.route('/purchase/<int:id>', methods=['GET', 'PUT'])
 def update_purchase(id):
@@ -94,6 +95,7 @@ def update_purchase(id):
             'product_id': purchase.product_id,
             'name': purchase.product.name,
             'purchase_quantity': purchase.purchase_quantity,
+            'purchase_quantity_unit':  product_unit[purchase.product.unit],
             'purchase_rate': purchase.purchase_rate,
             'purchase_amount': purchase.purchase_amount,
             'purchase_date': purchase.purchase_date.strftime('%Y-%m-%d'),

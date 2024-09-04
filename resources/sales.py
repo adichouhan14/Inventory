@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, render_template, url_for
-from db import db
+from db import db, product_unit
 from models import Sale, Stock, Product
 from datetime import datetime
 import traceback
@@ -70,7 +70,7 @@ def show_sales():
     for sale in sales:
         sale.name = sale.product.name
     products = Product.query.all()
-    return render_template('sales.html', sales=sales, products=products, pagination=pagination)
+    return render_template('sales.html', sales=sales, products=products, product_unit=product_unit, pagination=pagination)
 
 # Retrieve sale data for editing
 @sales_bp.route('/sale/<int:id>', methods=['GET', 'PUT'])
@@ -87,6 +87,7 @@ def update_sale(id):
                 'product_id': sale.product_id,
                 'name': sale.product.name,
                 'sales_quantity': sale.sales_quantity,
+                'sales_quantity_unit':  product_unit[sale.product.unit],
                 'sales_rate': sale.sales_rate,
                 'sales_amount': sale.sales_amount,
                 'sales_date': sale.sales_date.strftime('%Y-%m-%d'),

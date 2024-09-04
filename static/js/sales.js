@@ -63,6 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('productName').value = data.product_id;
                     document.getElementById('productName').textContent = data.name;
                     document.getElementById('salesQuantity').value = data.sales_quantity;
+                    document.getElementById('saleEditUnit').textContent = data.sales_quantity_unit;
                     document.getElementById('salesRate').value = data.sales_rate;
                     document.getElementById('salesAmount').value = data.sales_amount;
                     document.getElementById('editsaleDate').value = data.sales_date;

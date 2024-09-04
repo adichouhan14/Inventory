@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, render_template
 from models import Stock, Product
-from db import db
+from db import db,product_unit
 from datetime import datetime
 
 # Create a Blueprint
@@ -38,6 +38,7 @@ def show_stocks():
     stocks = pagination.items
     for stock in stocks:
         stock.name = stock.product.name
+        stock.unit = product_unit[stock.product.unit]
     products = Product.query.all()
     return render_template('stocks.html', stocks=stocks, products=products, pagination=pagination)
 
