@@ -61,8 +61,9 @@
 </div>
 
 <!-- Edit Purchase Modal -->
+<!-- Edit Purchase Modal -->
 <div class="modal fade" id="editPurchaseModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg"> <!-- Large modal for better spacing -->
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editModalLabel">Edit Purchase</h5>
@@ -70,73 +71,92 @@
             </div>
             <div class="modal-body">
                 <form id="editPurchaseForm">
-                    <div class="mb-3">
-                        <label for="purchaseId" class="form-label">Purchase ID</label>
-                        <input type="text" class="form-control" id="purchaseId" name="id" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="productId" class="form-label">Product</label>
-                        <select class="form-control form-select" id="productId" name="product_id" required>
-                            <option id="productName" selected></option>
-                            {% for product in products %}
-                            <option value="{{ product.id }}"> {{ product.name }} </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="purchaseQuantity" class="form-label">Quantity</label>
-                        <div class="input-group">
-                            <input type="number" step="0.01" class="form-control" id="purchaseQuantity"
-                            name="purchase_quantity" required>
-                            <span class="input-group-text" id="purchaseEditUnit">@example.com</span>
-                          </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="purchaseRate" class="form-label">Purchase Rate</label>
-                        <div class="input-group">
-                            <span class="input-group-text" id="basic-addon1"><svg xmlns="http://www.w3.org/2000/svg"
-                                    width="16" height="16" fill="currentColor" class="bi bi-currency-rupee"
-                                    viewBox="0 0 16 16">
-                                    <path d="M4 3.06h2.726c1.22 0 2.12.575 2.325 1.724H4v1.051h5.051C8.855 7.001 8 7.558 6.788 7.558H4v1.317L8.437 14h2.11L6.095 8.884h.855c2.316-.018 3.465-1.476 3.688-3.049H12V4.784h-1.345c-.08-.778-.357-1.335-.793-1.732H12V2H4z" /></svg>
-                                </span>
-                            <input type="number" step="0.01" class="form-control" id="purchaseRate" name="purchase_rate"
-                                required>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="purchaseAmount" class="form-label">Amount</label>
-                        <div class="input-group">
-                            <span class="input-group-text" id="basic-addon1"><svg xmlns="http://www.w3.org/2000/svg"
-                                    width="16" height="16" fill="currentColor" class="bi bi-currency-rupee"
-                                    viewBox="0 0 16 16">
-                                    <path d="M4 3.06h2.726c1.22 0 2.12.575 2.325 1.724H4v1.051h5.051C8.855 7.001 8 7.558 6.788 7.558H4v1.317L8.437 14h2.11L6.095 8.884h.855c2.316-.018 3.465-1.476 3.688-3.049H12V4.784h-1.345c-.08-.778-.357-1.335-.793-1.732H12V2H4z" /></svg>
-                            </span>
-                        <input type="number" step="0.01" class="form-control" id="purchaseAmount" name="purchase_amount"
-                            required readonly>
+                    <div class="container-fluid">
+                        <!-- Row 1: Purchase ID and Product -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="purchaseId" class="form-label">Purchase ID</label>
+                                <input type="text" class="form-control" id="purchaseId" name="id" readonly>
                             </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="purchaseDate" class="form-label">Purchase Date</label>
-                        <input type="date" class="form-control" id="editPurchaseDate" name="edit_purchase_date"
-                            required>
-                    </div>
-                    <!-- New supplier fields -->
-                    <div class="mb-3">
-                        <label for="supplierName" class="form-label">Supplier Name</label>
-                        <input type="text" class="form-control" id="supplierName" name="supplier_name">
-                    </div>
-                    <div class="mb-3">
-                        <label for="supplierContact" class="form-label">Supplier Contact</label>
-                        <input type="text" class="form-control" id="supplierContact" name="supplier_contact">
-                    </div>
-                    <div class="mb-3">
-                        <label for="supplierAddress" class="form-label">Supplier Address</label>
-                        <input type="text" class="form-control" id="supplierAddress" name="supplier_address">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary" id="updatePurchaseBtn">Update Purchase</button>
+                            <div class="col-md-6">
+                                <label for="productId" class="form-label">Product</label>
+                                <select class="form-control form-select" id="productId" name="product_id" required>
+                                    <option id="productName" selected></option>
+                                    {% for product in products %}
+                                        <option value="{{ product.id }}"> {{ product.name }} </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Row 2: Purchase Quantity and Purchase Rate -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="purchaseQuantity" class="form-label">Purchase Quantity</label>
+                                <div class="input-group">
+                                    <input type="number" step="0.01" class="form-control" id="purchaseQuantity" name="purchase_quantity" required>
+                                    <span class="input-group-text" id="purchaseEditUnit">Unit</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="purchaseRate" class="form-label">Purchase Rate</label>
+                                <div class="input-group">
+                                    <span class="input-group-text" id="basic-addon1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-currency-rupee" viewBox="0 0 16 16">
+                                            <path d="M4 3.06h2.726c1.22 0 2.12.575 2.325 1.724H4v1.051h5.051C8.855 7.001 8 7.558 6.788 7.558H4v1.317L8.437 14h2.11L6.095 8.884h.855c2.316-.018 3.465-1.476 3.688-3.049H12V4.784h-1.345c-.08-.778-.357-1.335-.793-1.732H12V2H4z"/>
+                                        </svg>
+                                    </span>
+                                    <input type="number" step="0.01" class="form-control" id="purchaseRate" name="purchase_rate" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Row 3: Purchase Amount and Purchase Date -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="purchaseAmount" class="form-label">Purchase Amount</label>
+                                <div class="input-group">
+                                    <span class="input-group-text" id="basic-addon2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-currency-rupee" viewBox="0 0 16 16">
+                                            <path d="M4 3.06h2.726c1.22 0 2.12.575 2.325 1.724H4v1.051h5.051C8.855 7.001 8 7.558 6.788 7.558H4v1.317L8.437 14h2.11L6.095 8.884h.855c2.316-.018 3.465-1.476 3.688-3.049H12V4.784h-1.345c-.08-.778-.357-1.335-.793-1.732H12V2H4z"/>
+                                        </svg>
+                                    </span>
+                                    <input type="number" step="0.01" class="form-control" id="purchaseAmount" name="purchase_amount" required readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editPurchaseDate" class="form-label">Purchase Date</label>
+                                <input type="date" class="form-control" id="editPurchaseDate" name="edit_purchase_date" required>
+                            </div>
+                        </div>
+
+                        <!-- Row 4: Supplier Name and Supplier Contact -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="supplierName" class="form-label">Supplier Name</label>
+                                <input type="text" class="form-control" id="supplierName" name="supplier_name">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="supplierContact" class="form-label">Supplier Contact</label>
+                                <input type="text" class="form-control" id="supplierContact" name="supplier_contact">
+                            </div>
+                        </div>
+
+                        <!-- Row 5: Supplier Address -->
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <label for="supplierAddress" class="form-label">Supplier Address</label>
+                                <input type="text" class="form-control" id="supplierAddress" name="supplier_address">
+                            </div>
+                        </div>
+
+                        <!-- Row 6: Buttons -->
+                        <div class="row">
+                            <div class="col-md-12 text-end">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-primary" id="updatePurchaseBtn">Update</button>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -144,9 +164,11 @@
     </div>
 </div>
 
+
 <!-- Add Purchase Modal -->
+# side by side
 <div class="modal fade" id="addPurchaseModal" tabindex="-1" aria-labelledby="addPurchaseModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="addPurchaseModalLabel">Add Purchase</h5>
@@ -154,52 +176,57 @@
             </div>
             <div class="modal-body">
                 <form id="addPurchaseForm">
-                    <div class="mb-3">
-                        <label for="productId" class="form-label">Product</label>
-                        <select class="form-control form-select" id="productId" name="product_id" required>
-                            <option selected>Select Product</option>
-                            {% for product in products %}
-                            <option value="{{ product.id }}">{{ product.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="purchaseQuantity" class="form-label">Purchase Quantity</label>
-                        <input type="number" step="0.01" class="form-control" id="purchaseQuantity"
-                            name="purchase_quantity" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="purchaseRate" class="form-label">Purchase Rate</label>
-                        <div class="input-group">
-                            <span class="input-group-text" id="basic-addon1"><svg xmlns="http://www.w3.org/2000/svg"
-                                    width="16" height="16" fill="currentColor" class="bi bi-currency-rupee"
-                                    viewBox="0 0 16 16">
-                                    <path
-                                        d="M4 3.06h2.726c1.22 0 2.12.575 2.325 1.724H4v1.051h5.051C8.855 7.001 8 7.558 6.788 7.558H4v1.317L8.437 14h2.11L6.095 8.884h.855c2.316-.018 3.465-1.476 3.688-3.049H12V4.784h-1.345c-.08-.778-.357-1.335-.793-1.732H12V2H4z" />
-                                </svg></span>
-                            <input type="number" step="0.01" class="form-control" id="purchaseRate" name="purchase_rate"
-                                aria-describedby="basic-addon1" required>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="productId" class="form-label">Product</label>
+                            <select class="form-control form-select" id="productId" name="product_id" required>
+                                <option selected>Select Product</option>
+                                {% for product in products %}
+                                <option value="{{ product.id }}">{{ product.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="purchaseQuantity" class="form-label">Purchase Quantity</label>
+                            <input type="number" step="0.01" class="form-control" id="purchaseQuantity" name="purchase_quantity" required>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="purchaseDate" class="form-label">Purchase Date</label>
-                        <input type="date" class="form-control" id="addPurchaseDate" name="add_purchase_date" required>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="purchaseRate" class="form-label">Purchase Rate</label>
+                            <div class="input-group">
+                                <span class="input-group-text" id="basic-addon1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-currency-rupee" viewBox="0 0 16 16">
+                                        <path d="M4 3.06h2.726c1.22 0 2.12.575 2.325 1.724H4v1.051h5.051C8.855 7.001 8 7.558 6.788 7.558H4v1.317L8.437 14h2.11L6.095 8.884h.855c2.316-.018 3.465-1.476 3.688-3.049H12V4.784h-1.345c-.08-.778-.357-1.335-.793-1.732H12V2H4z" />
+                                    </svg>
+                                </span>
+                                <input type="number" step="0.01" class="form-control" id="purchaseRate" name="purchase_rate" aria-describedby="basic-addon1" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="purchaseDate" class="form-label">Purchase Date</label>
+                            <input type="date" class="form-control" id="addPurchaseDate" name="add_purchase_date" required>
+                        </div>
                     </div>
-                    <!-- New supplier fields -->
-                    <div class="mb-3">
-                        <label for="supplierName" class="form-label">Supplier Name</label>
-                        <input type="text" class="form-control" id="supplierName" name="supplier_name">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="supplierName" class="form-label">Supplier Name</label>
+                            <input type="text" class="form-control" id="supplierName" name="supplier_name">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="supplierContact" class="form-label">Supplier Contact</label>
+                            <input type="text" class="form-control" id="supplierContact" name="supplier_contact">
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="supplierContact" class="form-label">Supplier Contact</label>
-                        <input type="text" class="form-control" id="supplierContact" name="supplier_contact">
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="supplierAddress" class="form-label">Supplier Address</label>
+                            <input type="text" class="form-control" id="supplierAddress" name="supplier_address">
+                        </div>
+                        
                     </div>
-                    <div class="mb-3">
-                        <label for="supplierAddress" class="form-label">Supplier Address</label>
-                        <input type="text" class="form-control" id="supplierAddress" name="supplier_address">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <div class="d-flex justify-content-end mt-4">
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-primary" id="addPurchaseBtn">Add</button>
                     </div>
                 </form>
@@ -207,5 +234,7 @@
         </div>
     </div>
 </div>
+
+
 
 {% endblock %}
