@@ -4,16 +4,16 @@
 {% block page_title %}Stocks List{% endblock %}
 {% set buttonlabel = "Add new stock" %}
 {% set redirect_link = "add_stock" %}
-{% set add_record = "add_stock" %}
+{% set add_record = "add_stock disabled" %}
 {% set filter_label = "Stock ID or Product Name" %}
 {% set filter_value = "filter_stock" %}
 {% set tbodyid = "stockTableBody" %}
 
 {% block table_headers %}
 <th>Stock ID</th>
+<th>Last update date</th>
 <th>Product Name</th>
 <th>Purchase Quantity</th>
-<th>Last update date</th>
 {% endblock %}
 
 {% block table_rows %}
@@ -21,12 +21,12 @@
 {% for stock in stocks %}
 <tr id="stock-{{ stock.id }}">
     <td>{{ stock.id }}</td>
+    <td>{{ stock.last_update_date.strftime('%Y-%m-%d') }}</td>
     <td>{{ stock.name }}</td>
     <td>{{ stock.product_quantity }}</td>
-    <td>{{ stock.last_update_date.strftime('%Y-%m-%d') }}</td>
     <td>
-        <button class="btn btn-warning btn-sm edit-btn3" data-id="{{ stock.id }}">Edit</button>
-        <button class="btn btn-danger btn-sm delete-btn3" data-id="{{ stock.id }}">Delete</button>
+        <button class="btn btn-warning btn-sm edit-btn3" data-id="{{ stock.id }}" disabled>Edit</button>
+        <button class="btn btn-danger btn-sm delete-btn3" data-id="{{ stock.id }}" disabled>Delete</button>
     </td>
 </tr>
 

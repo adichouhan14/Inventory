@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     // Populate the form with the product data
                     document.getElementById('recordId').value = data.id;
                     document.getElementById('recordName').value = data.name;
-                    document.getElementById('recordCategoryedit').value = data.category;
+                    document.getElementById('recordCategoryedit').value = data.category_id;
                     document.getElementById('recordCategoryedit').textContent = data.category;
                     document.getElementById('editproductunit').value = data.unit;
                     document.getElementById('editproductunit').textContent = data.unit_text;
