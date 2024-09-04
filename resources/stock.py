@@ -42,19 +42,6 @@ def show_stocks():
     products = Product.query.all()
     return render_template('stocks.html', stocks=stocks, products=products, pagination=pagination)
 
-# Update an existing stock entry
-# @stock_bp.route('/stock/<int:id>', methods=['PUT'])
-# def update_stock(id):
-#     data = request.get_json()
-#     stock = Stock.query.get(id)
-#     if not stock:
-#         return jsonify({"message": "Stock entry not found!"}), 404
-    
-#     stock.product_quantity = data.get('product_quantity', stock.product_quantity)
-#     stock.last_update_date = datetime.utcnow()
-    
-#     db.session.commit()
-#     return jsonify({"message": "Stock entry updated successfully!"})
 
 @stock_bp.route('/stock/<int:id>', methods=['GET', 'PUT'])
 def update_stock(id):
