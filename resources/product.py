@@ -51,7 +51,7 @@ def insert_product():
         new_product = Product(
             name=data['name'],
             category_id=data['category_id'],
-            unit = 1,
+            unit = data['recordUnit'],
             introduce_date=datetime.utcnow()  # or data['introduce_date'] if provided
         )
         db.session.add(new_product)
@@ -139,6 +139,7 @@ def filter_products():
         'id': product.id,
         'name': product.name,
         'category': product.category.name,
+        'unit_text':product_unit[product.unit],
         'introduce_date': product.introduce_date.strftime('%Y-%m-%d')
     } for product in filtered_products]
 

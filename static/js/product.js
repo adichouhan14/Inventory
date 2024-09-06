@@ -129,6 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             <td>${product.id}</td>
                             <td>${product.category}</td>
                             <td>${product.name}</td>
+                            <td>${product.unit_text}</td>
                             <td>${new Date(product.introduce_date).toISOString().slice(0, 10)}</td>
                             <td>
                                 <button class="btn btn-warning btn-sm edit-btn" data-id="${product.id}">Edit</button>

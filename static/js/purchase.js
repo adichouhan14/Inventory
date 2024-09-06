@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             <td>${new Date(purchase.purchase_date).toISOString().slice(0, 10)}</td>
                             <td>${purchase.supplier_name}</td>
                             <td>${purchase.supplier_contact}</td>
-                            <td>${purchase.supplier_address}</td>
+                            <!-- <td>${purchase.supplier_address}</td> -->
                             <td>
                                 <button class="btn btn-warning btn-sm edit-btn2" data-id="${purchase.id}">Edit</button>
                                 <button class="btn btn-danger btn-sm delete-btn2" data-id="${purchase.id}">Delete</button>
