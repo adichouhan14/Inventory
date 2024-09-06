@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, render_template
 from models import Stock, Product
-from db import db
+from db import db,product_unit
 from datetime import datetime
 
 # Create a Blueprint
@@ -9,7 +9,8 @@ stock_bp = Blueprint('stock_bp', __name__)
 # Insert a new stock entry
 @stock_bp.route('/stock', methods=['POST'])
 def insert_stock():
-    data = request.get_json()
+    data = request.form
+    print('data stock post method -->>',data)
     product_id = data['product_id']
     product_quantity = data['product_quantity']
     
@@ -37,22 +38,44 @@ def show_stocks():
     stocks = pagination.items
     for stock in stocks:
         stock.name = stock.product.name
+        stock.unit = product_unit[stock.product.unit]
+    products = Product.query.all()
+    return render_template('stocks.html', stocks=stocks, products=products, pagination=pagination)
 
-    return render_template('stocks.html', stocks=stocks, pagination=pagination)
 
-# Update an existing stock entry
-@stock_bp.route('/stock/<int:id>', methods=['PUT'])
+@stock_bp.route('/stock/<int:id>', methods=['GET', 'PUT'])
 def update_stock(id):
-    data = request.get_json()
-    stock = Stock.query.get(id)
-    if not stock:
-        return jsonify({"message": "Stock entry not found!"}), 404
-    
-    stock.product_quantity = data.get('product_quantity', stock.product_quantity)
-    stock.last_update_date = datetime.utcnow()
-    
-    db.session.commit()
-    return jsonify({"message": "Stock entry updated successfully!"})
+    if request.method == 'GET':
+        stock = Stock.query.get(id)
+        if not stock:
+            return jsonify({"message": "Stock entry not found!"}), 404
+
+        stock_data = {
+            'id': stock.id,
+            'product_id': stock.product_id,
+            'product_name': stock.product.name,
+            'product_quantity': stock.product_quantity,
+            'last_update_date': stock.last_update_date.strftime('%Y-%m-%d')
+        }
+        return jsonify(stock_data), 200
+
+    # Handle the PUT method for updating the stock entry
+    try:
+        data = request.get_json()
+        stock = Stock.query.get(id)
+        if not stock:
+            return jsonify({"message": "Stock entry not found!"}), 404
+        stock.product_id = data.get('product_id', stock.product_id)
+        stock.product_quantity = data.get('product_quantity', stock.product_quantity)
+        stock.last_update_date = datetime.utcnow()
+        
+        db.session.commit()
+        return jsonify({"message": "Stock entry updated successfully!"}), 200
+    except Exception as e:
+        return jsonify({"message": "Stock entry cannot be updated!"}), 404
+        
+
+
 
 # Delete a stock entry
 @stock_bp.route('/stock/<int:id>', methods=['DELETE'])

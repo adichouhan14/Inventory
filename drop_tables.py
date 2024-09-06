@@ -2,7 +2,8 @@ from sqlalchemy import create_engine, MetaData
 from sqlalchemy.ext.declarative import declarative_base
 
 # Define your database URI
-DATABASE_URI = 'postgresql://postgres:Admin@localhost:5432/saheb_stone' # Replace with your actual database URI
+# DATABASE_URI = 'postgresql://postgres:admin@localhost:5432/tiles_data' # Replace with your actual database URI - Sapana
+DATABASE_URI = 'postgresql://postgres:Admin@localhost:5432/saheb_stone' # Replace with your actual database URI - Sapana
 
 # Create an engine
 engine = create_engine(DATABASE_URI)

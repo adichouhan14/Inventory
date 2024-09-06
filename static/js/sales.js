@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
+    
+    setTodayDate("addSellDate")
     let deleteSalesId = null;
 
     console.log('DOM loaded successfully...in Sales');
@@ -58,11 +60,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     // Populate the form with the sale data
                     document.getElementById('saleId').value = data.id;
-                    document.getElementById('productName').value = data.name;
+                    document.getElementById('productName').value = data.product_id;
                     document.getElementById('productName').textContent = data.name;
                     document.getElementById('salesQuantity').value = data.sales_quantity;
+                    document.getElementById('saleEditUnit').textContent = data.sales_quantity_unit;
                     document.getElementById('salesRate').value = data.sales_rate;
                     document.getElementById('salesAmount').value = data.sales_amount;
+                    document.getElementById('editsaleDate').value = data.sales_date;
+
+                    // Populate customer details
+                    document.getElementById('customerName').value = data.customer_name;
+                    document.getElementById('contactNo').value = data.contact_no;
+                    document.getElementById('customerAddress').value = data.customer_address;
 
                     // Show the modal
                     var editModal = new bootstrap.Modal(document.getElementById('editSalesModal'));
@@ -91,10 +100,23 @@ document.addEventListener('DOMContentLoaded', function () {
             body: formJSON
         }).then(response => response.json().then(data => ({ status: response.status, body: data })))
             .then(({ status, body }) => {
-                if (status === 200) {
-                    window.location.reload(); // Reload the page to show updated data
-                } else {
-                    alert('An error occurred while updating the sale.');
+                console.log('edit sale status',status)
+                const modalElement = document.getElementById('editSalesModal');
+                const modal = bootstrap.Modal.getInstance(modalElement); // Get the modal instance
+                if (status === 200) {  // Check for the 201 Created status code
+                    modal.hide(); // Hide the modal
+                    document.getElementById('addSalesForm').reset(); // Reset the form
+                    showPopup('Success', 'Sale record updated successfully!');
+                    setTimeout(() => {
+                        window.location.reload(); // Reload to reflect the new sale
+                    }, 2000);
+                } 
+                else {
+                    showPopup('Error', body.message || 'Failed to update sale record.');
+                    modal.hide();
+                    setTimeout(() => {
+                        window.location.reload(); // Reload to reflect the new sale
+                    }, 3000);
                 }
             }).catch(error => {
                 console.error('Error:', error);
@@ -103,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     });
 
-    //Filter
+    // Filter sales
     console.log('in sales....93')
     const filterSalesInput = document.getElementById('filter_sale');
     const salesTableBody = document.getElementById('salesTableBody');
@@ -111,14 +133,14 @@ document.addEventListener('DOMContentLoaded', function () {
     filterSalesInput.addEventListener('input', function () {
         const query = this.value;
         console.log('Inside filter sales')
-        // Send a request to the server to get the filtered products
+        // Send a request to the server to get the filtered sales
         fetch(`/sale/filter?query=${query}`)
             .then(response => response.json())
             .then(data => {
                 // Clear the current table rows
                 salesTableBody.innerHTML = '';
 
-                // Populate the table with the filtered products
+                // Populate the table with the filtered sales
                 console.log('data-->', data)
                 data.sales.forEach(sale => {
                     const row = `
@@ -129,18 +151,21 @@ document.addEventListener('DOMContentLoaded', function () {
                             <td>${sale.sales_rate}</td>
                             <td>${sale.sales_amount}</td>
                             <td>${new Date(sale.sales_date).toISOString().slice(0, 10)}</td>
+                            <td>${sale.customer_name}</td>
+                            <td>${sale.contact_no}</td>
+                            <!-- <td>${sale.customer_address}</td> -->
                             <td>
                                 <button class="btn btn-warning btn-sm edit-btn1" data-id="${sale.id}">Edit</button>
                                 <button class="btn btn-danger btn-sm delete-btn1" data-id="${sale.id}">Delete</button>
                             </td>
                         </tr>
                     `;
-                    salesTableBody.insertAdjacentHTML('beforeend', row);
+                    salesTableBody.insertAdjacentHTML('beforeend', row);   
                 });
             })
             .catch(error => console.error('Error fetching filtered sales:', error));
     });
-
+    
     // Show add sales modal
     console.log('Sales add.............')
     document.getElementById('add_sale').addEventListener('click', function () {
@@ -148,7 +173,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var addSalesModal = new bootstrap.Modal(document.getElementById('addSalesModal'));
         addSalesModal.show();
     });
-
+    console.log('Sales add.............159')
     // Handle form submission for adding a sale
     document.getElementById('addSalesForm').addEventListener('submit', function (e) {
         e.preventDefault();
@@ -176,21 +201,12 @@ document.addEventListener('DOMContentLoaded', function () {
                         window.location.reload(); // Reload to reflect the new sale
                     }, 2000);
                 } 
-                else if (status === 404) { 
-                    showPopup('Error', body.message || 'Product not found in Product table!');
-                    modal.hide();
-                    setTimeout(() => {
-                        window.location.reload(); // Reload to reflect the new sale
-                    }, 3000);
-                    
-                }
                 else {
                     showPopup('Error', body.message || 'Failed to insert sale record.');
                     modal.hide();
                     setTimeout(() => {
                         window.location.reload(); // Reload to reflect the new sale
                     }, 3000);
-                    
                 }
             }).catch(error => {
                 console.error('Error:', error);

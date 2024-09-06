@@ -14,93 +14,95 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Confirm delete button click event
-    // document.getElementById('confirmDeleteStock').addEventListener('click', function () {
-    //     if (deleteStockId) {
-    //         fetch('/stock/' + deleteStockId, {
-    //             method: 'DELETE',
-    //             headers: {
-    //                 'Content-Type': 'application/json'
-    //             }
-    //         }).then(response => {
-    //             if (response.status === 200) {
-    //                 showPopup('Deleted', 'This stock record has been deleted successfully.');
-    //                 setTimeout(() => {
-    //                     window.location.href = window.location.origin + '/stocks';
-    //                 }, 2000);
-    //             } else {
-    //                 showPopup('Error', 'Failed to delete stock.');
-    //             }
-    //             var deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteModalStock'));
-    //             deleteModal.hide();
-    //         }).catch(error => {
-    //             console.error('Error:', error);
-    //             alert('An error occurred while deleting the stock.');
-    //         });
-    //     }
-    // });
+    document.getElementById('confirmDeleteStock').addEventListener('click', function () {
+        if (deleteStockId) {
+            fetch('/stock/' + deleteStockId, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.status === 200) {
+                    showPopup('Deleted', 'This stock record has been deleted successfully.');
+                    setTimeout(() => {
+                        window.location.href = window.location.origin + '/stocks';
+                    }, 3000);
+                } else {
+                    showPopup('Error', 'Failed to delete stock.');
+                }
+                var deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteModalStock'));
+                deleteModal.hide();
+            }).catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while deleting the stock.');
+            });
+        }
+    });
 
     // Edit button click event to show the edit modal
-    // let editStockId = null;
-    // document.querySelectorAll('.edit-btn3').forEach(function (button) {
-    //     button.addEventListener('click', function () {
-    //         console.log('Clicked edit button for Stock');
-    //         editStockId = this.dataset.id;
+    let editStockId = null;
+    document.querySelectorAll('.edit-btn3').forEach(function (button) {
+        button.addEventListener('click', function () {
+            console.log('Clicked edit button for Stock');
+            editStockId = this.dataset.id;
 
-    //         // Fetch the stock details by ID and populate the form in the modal
-    //         fetch('/stock/' + editStockId)
-    //             .then(response => {
-    //                 if (!response.ok) {
-    //                     throw new Error('Network response was not ok');
-    //                 }
-    //                 return response.json();
-    //             })
-    //             .then(data => {
-    //                 console.log('Fetched stock data:', data);
+            // Fetch the stock details by ID and populate the form in the modal
+            fetch('/stock/' + editStockId)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Fetched stock data:', data);
 
-    //                 // Populate the form with the stock data
-    //                 document.getElementById('stockId').value = data.id;
-    //                 document.getElementById('productName').value = data.name;
-    //                 document.getElementById('productQuantity').value = data.product_quantity;
-    //                 document.getElementById('lastUpdateDate').value = new Date(data.last_update_date).toISOString().slice(0, 10);
+                    // Populate the form with the stock data
+                    document.getElementById('stockId').value = data.id;
+                    document.getElementById('productName').value = data.product_id;
+                    document.getElementById('productName').textContent = data.product_name;
+                    document.getElementById('productQuantity').value = data.product_quantity;
+                    document.getElementById('lastUpdateDate').value = new Date(data.last_update_date).toISOString().slice(0, 10);
 
-    //                 // Show the modal
-    //                 var editModal = new bootstrap.Modal(document.getElementById('editStockModal'));
-    //                 editModal.show();
-    //             })
-    //             .catch(error => {
-    //                 console.error('Error fetching stock data:', error);
-    //                 alert('An error occurred while fetching the stock data.');
-    //             });
-    //     });
-    // });
+                    // Show the modal
+                    var editModal = new bootstrap.Modal(document.getElementById('editStockModal'));
+                    editModal.show();
+                })
+                .catch(error => {
+                    console.error('Error fetching stock data:', error);
+                    alert('An error occurred while fetching the stock data.');
+                });
+        });
+    });
 
     // Form submission for updating the stock
-    // document.getElementById('editStockForm').addEventListener('submit', function (e) {
-    //     e.preventDefault();
-    //     console.log('Submitting update for Stock ID:', editStockId);
+    document.getElementById('editStockForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        console.log('Submitting update for Stock ID:', editStockId);
 
-    //     const formData = new FormData(this);
-    //     const formJSON = JSON.stringify(Object.fromEntries(formData.entries()));
+        const formData = new FormData(this);
+        const formJSON = JSON.stringify(Object.fromEntries(formData.entries()));
 
-    //     fetch('/stock/' + editStockId, {
-    //         method: 'PUT',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: formJSON
-    //     }).then(response => response.json().then(data => ({ status: response.status, body: data })))
-    //         .then(({ status, body }) => {
-    //             if (status === 200) {
-    //                 window.location.reload(); // Reload the page to show updated data
-    //             } else {
-    //                 alert('An error occurred while updating the stock.');
-    //             }
-    //         }).catch(error => {
-    //             console.error('Error:', error);
-    //             alert('An error occurred while updating the stock.');
-    //         });
+        fetch('/stock/' + editStockId, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: formJSON
+        }).then(response => response.json().then(data => ({ status: response.status, body: data })))
+            .then(({ status, body }) => {
+                console.log('update stock status',status)
+                if (status === 200) {
+                    // window.location.reload(); // Reload the page to show updated data
+                } else {
+                    alert('An error occurred while updating the stock.');
+                }
+            }).catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating the stock.');
+            });
 
-    // });
+    });
 
     // Filter stock
     console.log('in stock....93');

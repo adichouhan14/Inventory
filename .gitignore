@@ -3,3 +3,5 @@ virtualenv
 .env
 .idea
 .venv
+virtile
+drop_tables.py
